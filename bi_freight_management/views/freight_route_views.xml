@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="freight_route_view_form" model="ir.ui.view">
+        <field name="name">freight.route.form</field>
+        <field name="model">freight.route</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="type" widget="radio" options="{'vertical': true}"/>
+                        </group>
+                        <group>
+                            <field name="transport" widget="radio" options="{'vertical': true}"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <div class="oe_inline">
+                                <h4>From</h4>
+                            </div>
+                        </group>
+                        <group>
+                            <div class="oe_inline">
+                                <h4>To</h4>
+                            </div>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="from_port_id" invisible="transport != 'land'" required="transport == 'land'"/>
+                            <field name="loading_port_id" invisible="transport != 'ocean'" required="transport == 'ocean'"/>
+                            <field name="gateway_id" invisible="transport != 'air'" required="transport == 'air'"/>
+                            <field name="mawb_no" invisible="transport != 'air'"/>
+                            <field name="shipping_line_id" invisible="transport != 'ocean'"/>
+                            <field name="voyage_no" invisible="transport != 'ocean'"/>
+                            <field name="vessel_id" invisible="transport != 'ocean'"/>
+                            <field name="obl" invisible="transport != 'ocean'"/>
+                        </group>
+                        <group>
+                            <field name="to_port_id" invisible="transport != 'land'" required="transport == 'land'"/>
+                            <field name="discharge_port_id" invisible="transport != 'ocean'" required="transport == 'ocean'"/>
+                            <field name="destination_id" invisible="transport != 'air'" required="transport == 'air'"/>
+                            <field name="airline_id" invisible="transport != 'air'"/>
+                            <field name="flight_no" invisible="transport != 'air'"/>
+                            <field name="date" widget="datetime"/>
+                            <field name="cmr_rwb_pro" invisible="transport != 'land'"/>
+                            <field name="trucker_id" invisible="transport != 'land'"/>
+                            <field name="trucker_no" invisible="transport != 'land'"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <div class="oe_inline">
+                                <h4>Follow Up</h4>
+                            </div>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="etd"/>
+                            <field name="atd"/>
+                        </group>
+                        <group>
+                            <field name="eta"/>
+                            <field name="ata"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Packages" name="packages">
+                            <field name="freight_packages_ids">
+                                <list create="1" delete="1" string="Freight Route Packages">
+                                    <field name="freight_package_id"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Services" name="services">
+                            <field name="freight_service_ids">
+                                <list create="1" delete="1" string="Freight Services">
+                                    <field name="vendor_id"/>
+                                    <field name="service_id"/>
+                                    <field name="description"/>
+                                    <field name="currency_id"/>
+                                    <field name="quantity"/>
+                                    <field name="cost"/>
+                                    <field name="sale"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

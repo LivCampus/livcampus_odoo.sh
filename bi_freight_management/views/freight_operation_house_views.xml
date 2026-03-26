@@ -1,0 +1,385 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="freight_operation_house_action" model="ir.actions.act_window">
+        <field name="name">House</field>
+        <field name="res_model">freight.operation</field>
+        <field name="binding_view_types">form</field>
+        <field name="context">{'default_type': 'house', 'default_selected_type': True}</field>
+        <field name="domain">[('type', '=', 'house')]</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <record id="freight_operation_direct_action" model="ir.actions.act_window">
+        <field name="name">Direct</field>
+        <field name="res_model">freight.operation</field>
+        <field name="binding_view_types">form</field>
+        <field name="context">{'default_type': 'direct', 'default_selected_type': True}</field>
+        <field name="domain">[('type', '=', 'direct')]</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <record id="freight_operation_master_action" model="ir.actions.act_window">
+        <field name="name">Master</field>
+        <field name="res_model">freight.operation</field>
+        <field name="binding_view_types">form</field>
+        <field name="context">{'default_type': 'master', 'default_selected_type': True}</field>
+        <field name="domain">[('type', '=', 'master')]</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <menuitem id="bi_freight_management.freight_menu_action" name="Freight" action="freight_operation_house_action"/>
+
+    <menuitem id="operation_menu" name="Operation" sequence="10" parent="bi_freight_management.freight_menu_action">
+        <menuitem id="direct_operation_menu" name="Direct" action="freight_operation_direct_action" sequence="10"/>
+        <menuitem id="freight_house_menu" name="House" action="freight_operation_house_action" sequence="20"/>
+        <menuitem id="master_operation_menu" name="Master" action="freight_operation_master_action" sequence="30"/>
+    </menuitem>
+
+    <record id="freight_operation_house_view_form" model="ir.ui.view">
+        <field name="name">freight.operation.house.form</field>
+        <field name="model">freight.operation</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="stage" widget="statusbar" class="o_field_statusbar" options="{'clickable': '1', 'fold_field': 'fold'}"/>
+                </header>
+                <sheet>
+                    <div name="button_box" class="oe_button_box">
+                        <button name="action_open_booking" type="object" class="oe_stat_button" invisible="is_booking != True" icon="fa-list">
+                            <div class="o_field_widget o_stat_info">
+                                <field name="is_booking" invisible="1"/>
+                                <field name="booking_count"/>
+                                <span class="o_stat_text">Bookings</span>
+                            </div>
+                        </button>
+                        <button name="action_open_quotation" type="object" class="oe_stat_button" icon="fa-pencil-square-o">
+                            <div class="o_field_widget o_stat_info">
+                                <field name="quotation_count"/>
+                                <span class="o_stat_text">Quotation</span>
+                            </div>
+                        </button>
+                        <button name="action_open_services" type="object" class="oe_stat_button" icon="fa-list">
+                            <div class="o_field_widget o_stat_info">
+                                <field name="service_count"/>
+                                <span class="o_stat_text">Services</span>
+                            </div>
+                        </button>
+                        <button name="action_open_invoices" type="object" context="{'open_invoice': True}" class="oe_stat_button" icon="fa-pencil-square-o">
+                            <div class="o_field_widget o_stat_info">
+                                <field name="invoice_count"/>
+                                <span class="o_stat_text">Invoices</span>
+                            </div>
+                        </button>
+                        <button name="action_open_vendor_bill" type="object" class="oe_stat_button" icon="fa-credit-card">
+                            <div class="o_field_widget o_stat_info">
+                                <field name="vendor_bill_count"/>
+                                <span class="o_stat_text">Vendor Bills</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="direction" widget="radio" options="{'vertical': true}"/>
+                        </group>
+                        <group>
+                            <field name="transport" widget="radio" options="{'vertical': true}"/>
+                        </group>
+                        <group>
+                            <field name="selected_type" invisible="1"/>
+                            <field name="type" widget="radio" options="{'vertical': true}" invisible="selected_type == True"/>
+                        </group>
+                        <group>
+                            <field name="ocean_shipment_type" widget="radio" options="{'vertical': true}" invisible="transport != 'ocean'" required="transport == 'ocean'"/>
+                            <field name="inland_shipment_type" widget="radio" options="{'vertical': true}" invisible="transport != 'land'" required="transport == 'land'"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <div class="oe_title oe_inline">
+                                <h4>Shipper</h4>
+                            </div>
+                        </group>
+                        <group>
+                            <div class="oe_title oe_inline">
+                                <h4>Consignee</h4>
+                            </div>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="shipper_id"/>
+                        </group>
+                        <group>
+                            <field name="consignee_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <div class="oe_inline">
+                                <h4>Main Carriage</h4>
+                            </div>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="from_port_id" invisible="transport != 'land'" required="transport == 'land'"/>
+                            <field name="loading_port_id" invisible="transport != 'ocean'" required="transport == 'ocean'"/>
+                            <field name="gateway_id" invisible="transport != 'air'" required="transport == 'air'"/>
+                            <field name="mawb_no" invisible="transport != 'air'"/>
+                            <field name="shipping_line_id" invisible="transport != 'ocean'"/>
+                            <field name="voyage_no" invisible="transport != 'ocean'"/>
+                            <field name="vessel_id" invisible="transport != 'ocean'"/>
+                            <field name="obl" invisible="transport != 'ocean'"/>
+                        </group>
+                        <group>
+                            <field name="to_port_id" invisible="transport != 'land'" required="transport == 'land'"/>
+                            <field name="discharge_port_id" invisible="transport != 'ocean'" required="transport == 'ocean'"/>
+                            <field name="destination_id" invisible="transport != 'air'" required="transport == 'air'"/>
+                            <field name="airline_id" invisible="transport != 'air'"/>
+                            <field name="flight_no" invisible="transport != 'air'"/>
+                            <field name="date"/>
+                            <field name="cmr_rwb_pro" invisible="transport != 'land'"/>
+                            <field name="trucker_id" invisible="transport != 'land'"/>
+                            <field name="trucker_no" invisible="transport != 'land'"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <div class="oe_title oe_inline">
+                                <h4>General</h4>
+                            </div>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="barcode"/>
+                            <field name="agent_id"/>
+                            <field name="user_id"/>
+                            <field name="freight_pc_id"/>
+                            <field name="freight_other_pc_id"/>
+                        </group>
+                        <group>
+                            <field name="dangerous_goods"/>
+                            <field name="move_type_id"/>
+                            <field name="tracking_no"/>
+                            <field name="incoterm_id"/>
+                        </group>
+                        <field name="note" placeholder="Write Note ...."/>
+                    </group>
+                    <notebook>
+                        <page string="Accounting" name="accounting">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-active">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Customer Invoices(Receivables)</th>
+                                            <th>Vendor Bills(Payables)</th>
+                                            <th>Margin</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="table-active">Expected Bills</td>
+                                            <td>
+                                                <field name="expected_receivable" nolabel="1"/>
+                                            </td>
+                                            <td>
+                                                <field name="expected_payable" nolabel="1"/>
+                                            </td>
+                                            <td>
+                                                <field name="expected_margin" nolabel="1"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="table-active">Actual Payments</td>
+                                            <td>
+                                                <field name="actual_receivable" nolabel="1"/>
+                                            </td>
+                                            <td>
+                                                <field name="actual_payable" nolabel="1"/>
+                                            </td>
+                                            <td>
+                                                <field name="actual_margin" nolabel="1"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="table-active">Amounts Due</td>
+                                            <td>
+                                                <field name="receivable_due" nolabel="1"/>
+                                            </td>
+                                            <td>
+                                                <field name="payable_due" nolabel="1"/>
+                                            </td>
+                                            <td>#</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </page>
+                        <page string="Orders" name="orders">
+                            <field name="freight_order_ids">
+                                <list create="1" delete="1" string="Freight Orders">
+                                    <field name="description"/>
+                                    <field name="package_id"/>
+                                    <field name="quantity"/>
+                                    <field name="operation_value_id"/>
+                                    <field name="volume"/>
+                                    <field name="gross_weight"/>
+                                    <field name="freight_order_package_id"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Packages" name="packages">
+                            <button name="action_generate_packages_from_orders" type="object" string="Generate from Order" class="btn-secondary"/>
+                            <field name="freight_order_package_ids">
+                                <list create="1" delete="1" string="Freight Orders">
+                                    <field name="description"/>
+                                    <field name="package_id"/>
+                                    <field name="quantity"/>
+                                    <field name="operation_value_id"/>
+                                    <field name="volume"/>
+                                    <field name="gross_weight"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Routes" name="routes">
+                            <field name="freight_route_ids">
+                                <list create="1" delete="1" string="Freight Route">
+                                    <field name="route_operation"/>
+                                    <field name="source"/>
+                                    <field name="destination"/>
+                                    <field name="transport"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Services" name="services">
+                            <field name="freight_service_ids" force_save="1">
+                                <list create="1" delete="1" string="Freight Services">
+                                    <field name="vendor_id"/>
+                                    <field name="service_id"/>
+                                    <field name="description"/>
+                                    <field name="currency_id"/>
+                                    <field name="quantity"/>
+                                    <field name="cost"/>
+                                    <field name="sale"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Customs" name="customs">
+                            <group>
+                                <group>
+                                    <field name="declaration_no" />
+                                    <field name="declaration_date" />
+                                    <field name="custom_clearance_date" />
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Tracking" name="tracking">
+                            <field name="freight_tracking_ids">
+                                <list editable="bottom" string="Freight Services">
+                                    <field name="location"/>
+                                    <field name="description"/>
+                                    <field name="date"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="freight_operation_view_tree" model="ir.ui.view">
+        <field name="name">freight.operation.house.tree</field>
+        <field name="model">freight.operation</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="direction"/>
+                <field name="transport"/>
+                <field name="shipper_id"/>
+                <field name="consignee_id"/>
+                <field name="gateway_id"/>
+                <field name="destination_id"/>
+                <field name="agent_id"/>
+                <field name="expected_receivable"/>
+                <field name="expected_payable"/>
+                <field name="expected_margin"/>
+                <field name="actual_receivable"/>
+                <field name="actual_margin"/>
+                <field name="actual_payable"/>
+                <field name="receivable_due"/>
+                <field name="payable_due"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="freight_operation_house_view_kanban" model="ir.ui.view">
+        <field name="name">freight.operation.house.kanban</field>
+        <field name="model">freight.operation</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="stage" class="o_kanban_small_column" quick_create="false" archivable="false" sample="1">
+                <field name="name"/>
+                <field name="direction"/>
+                <field name="transport"/>
+                <field name="user_id"/>
+                <field name="date"/>
+                <field name="activity_ids"/>
+                <field name="color" widget="color"/>
+                <field name="stage"/>
+                <templates>
+                    <t t-name="card">
+                        <div class=" oe_kanban_global_click oe_kanban_card" t-attf-class="#{!selection_mode ? record.color.raw_value : ''}">
+                            <div class="oe_kanban_content">
+                                <strong class="o_kanban_record_title">
+                                    <field name="name"/>
+                                </strong>
+                                <br/>
+                                <strong>
+                                    <field name="direction"/>
+                                </strong>
+                                <div>
+                                Transport By <strong>
+                                    <field name="transport"/>
+                                </strong>
+                            </div>
+                            <div class="oe_kanban_footer">
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                       Date: <field name="date"/>
+                                    </div>
+                                    <div class="o_kanban_record_bottom">
+                                        <div class="oe_kanban_bottom_left">
+                                            <field name="activity_ids" widget="kanban_activity"/>
+                                        </div>
+                                        <div class="oe_kanban_bottom_right">
+                                            <field name="user_id" widget="many2one_avatar_user"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o_dropdown_kanban dropdown">
+                                <a class="dropdown-toggle o-no-caret btn" role="button" data-bs-toggle="dropdown" data-bs-display="static" href="#" aria-label="Dropdown menu" title="Dropdown menu">
+                                    <span class="fa fa-ellipsis-v"/>
+                                </a>
+                                <div class="dropdown-menu" role="menu">
+                                    <ul class="o_kanban_colorpicker" data-field="color"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </templates>
+        </kanban>
+    </field>
+</record>
+
+</odoo>

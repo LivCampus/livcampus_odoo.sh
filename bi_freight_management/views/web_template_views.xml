@@ -1,0 +1,622 @@
+<odoo>
+
+    <record id="menu_booking" model="website.menu">
+        <field name="name">Booking</field>
+        <field name="url">/booking</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence" type="int">65</field>
+    </record>
+
+    <template id="booking_create_massage">
+        <title>Booking</title>
+        <t t-call="website.layout">
+            <div class="oe_structure"/>
+            <div class="container text-center mt-4">
+                <t t-if="create">
+                    <div class="alert alert-success" role="alert">
+                        <h4 class="alert-heading">Thank You!</h4>
+                        <p>
+                            <t t-esc="massage"/>
+                        </p>
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="alert alert-warning" role="alert">
+                        <h4 class="alert-heading">Opps!</h4>
+                        <p>
+                            <t t-esc="massage"/>
+Please Try Again..</p>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    <template id="booking">
+        <title>Freight - Booking</title>
+        <t t-call="website.layout">
+            <div class="oe_structure"/>
+            <div class="container mt-4" id="booking_data">
+                <h4 class="mx-4 text-center">Your Bookings</h4>
+                <hr/>
+                <button type="submit" id="booking_create_btn_id" class="btn btn-info pull-left mb-3 booking_create_btn">Create New Booking</button>
+                <div class="container">
+                    <table class="table table-bordered" t-if="bookings">
+                        <thead>
+                            <tr class="active">
+                                <th width="15%">Booking</th>
+                                <th>Operation</th>
+                                <th>Transport</th>
+                                <th>Direction</th>
+                                <th>Shipper</th>
+                                <th width="15%">Consignee</th>
+                                <th width="15%">Source</th>
+                                <th width="15%">Destination</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="bookings" t-as="booking">
+                                <tr>
+                                    <td>
+                                        <t t-esc="booking.name"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="booking.operation"/>
+                                    </td>
+                                    <td>
+                                        <t t-if="booking.transport == 'air'">
+                                            <div class="badge bg-danger text-wrap">
+                                                <t t-esc="booking.transport"/>
+                                            </div>
+                                        </t>
+                                        <t t-elif="booking.transport == 'ocean'">
+                                            <div class="badge bg-primary text-wrap">
+                                                <t t-esc="booking.transport"/>
+                                            </div>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="badge bg-success text-wrap">
+                                                <t t-esc="booking.transport"/>
+                                            </div>
+                                        </t>
+                                    </td>
+                                    <td>
+                                        <t t-esc="booking.direction"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="booking.shipper_id.name"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="booking.consignee_id.name"/>
+                                    </td>
+                                    <td>
+                                        <t t-if="booking.transport == 'air'">
+                                            <t t-esc="booking.gateway_id.name"/>
+                                        </t>
+                                        <t t-elif="booking.transport == 'ocean'">
+                                            <t t-esc="booking.loading_port_id.name"/>
+                                        </t>
+                                        <t t-else="">
+                                            <t t-esc="booking.from_port_id.name"/>
+                                        </t>
+                                    </td>
+                                    <td>
+                                        <t t-if="booking.transport == 'air'">
+                                            <t t-esc="booking.destination_id.name"/>
+                                        </t>
+                                        <t t-elif="booking.transport == 'ocean'">
+                                            <t t-esc="booking.discharge_port_id.name"/>
+                                        </t>
+                                        <t t-else="">
+                                            <t t-esc="booking.to_port_id.name"/>
+                                        </t>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                    <table class="table table-bordered" t-else="">
+                        <tr>
+                            <td style="text-align:center;">
+                                <strong>No Any Records found</strong>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="container mt-4 booking_create" style="display:none" id="booking_create">
+                <h4 class="mx-4 text-center">Fill the below Details</h4>
+                <hr/>
+                <form role="form" action="/booking/create" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col">
+                            <div class="mt-3">
+                                <label for="operation" class="control-label">Operation</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="operation" id="house" value="house" required="required"/>
+                                <label class="form-check-label" for="house">House</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="operation" id="direct" value="direct"/>
+                                <label class="form-check-label" for="direct">Direct</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="operation" id="master" value="master"/>
+                                <label class="form-check-label" for="master">Master</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mt-3">
+                                <label for="direction" class="control-label">Direction</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="direction" id="import" value="import" required="required"/>
+                                <label class="form-check-label" for="import">Import</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="direction" id="export" value="export"/>
+                                <label class="form-check-label" for="export">Export</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mt-3">
+                                <label for="transport" class="control-label">Transport</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input transport_check" type="radio" name="transport" id="air" value="air" required="required"/>
+                                <label class="form-check-label" for="air">Air</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input transport_check" type="radio" name="transport" id="ocean" value="ocean"/>
+                                <label class="form-check-label" for="ocean">Ocean</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input transport_check" type="radio" name="transport" id="land" value="land"/>
+                                <label class="form-check-label" for="land">Land</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="shipping_ocean_type">
+                        <div class="mt-3">
+                            <label for="ocean_shipment_type" class="control-label">Ocean Shipment Type</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="ocean_shipment_type" id="fcl" value="fcl"/>
+                            <label class="form-check-label" for="fcl">FCL</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="ocean_shipment_type" id="lcl" value="lcl"/>
+                            <label class="form-check-label" for="lcl">LCL</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="shipping_land_type">
+                                <div class="mt-3">
+                                    <label for="inland_shipment_type" class="control-label">Inland Shipment Type</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="inland_shipment_type" id="ftl" value="ftl"/>
+                                    <label class="form-check-label" for="ftl">FTL</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="inland_shipment_type" id="ltl" value="ltl"/>
+                                    <label class="form-check-label" for="ltl">LTL</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <h6 class="mt-2">Shipper</h6>
+                            <div class="form-group">
+                                <label for="shipper_id" class="control-label col-form-label-sm">Shipper</label>
+                                <select name="shipper_id" class="form-control link-style" required="required">
+                                    <option/>
+                                    <t t-foreach="partners" t-as="partner">
+                                        <option t-esc="partner.name" t-att-value="partner.id"/>
+                                    </t>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <h6 class="mt-2">Consignee</h6>
+                            <div class="form-group">
+                                <label for="consignee_id" class="control-label col-form-label-sm">Consignee</label>
+                                <select name="consignee_id" class="form-control link-style" required="required">
+                                    <option/>
+                                    <t t-foreach="partners" t-as="partner">
+                                        <option t-esc="partner.name" t-att-value="partner.id"/>
+                                    </t>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row shipping_air_type">
+                        <h6 class="mt-2">Main Carriage</h6>
+                        <hr/>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="gateway_id" class="control-label col-form-label-sm">Gateway</label>
+                                <select name="gateway_id" id="gateway_id" class="form-control link-style">
+                                    <option/>
+                                    <t t-foreach="countries" t-as="country">
+                                        <option t-esc="country.name" t-att-value="country.id"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="mawb_no" class="control-label col-form-label-sm">MAWB No.</label>
+                                <input type="text" name="mawb_no" id="mawb_no" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="destination_id" class="control-label col-form-label-sm">Destination</label>
+                                <select name="destination_id" id="destination_id" class="form-control link-style">
+                                    <option/>
+                                    <t t-foreach="countries" t-as="country">
+                                        <option t-esc="country.name" t-att-value="country.id"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="airline_id" class="control-label col-form-label-sm">Airline</label>
+                                <select name="airline_id" class="form-control link-style">
+                                    <option/>
+                                    <t t-foreach="airlines" t-as="airline">
+                                        <option t-esc="airline.name" t-att-value="airline.id"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="flight_no" class="control-label col-form-label-sm">Flight No.</label>
+                                <input type="text" name="flight_no" id="flight_no" class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="air_date" class="control-label col-form-label-sm">Date</label>
+                                <input type="date" name="air_date" id="air_date" placeholder="YYYY-MM-DD" pattern="\d{4}-\d{2}-\d{2}" class="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row shipping_ocean_type">
+                        <h6 class="mt-2">Main Carriage</h6>
+                        <hr/>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="loading_port_id" class="control-label col-form-label-sm">Loading Port</label>
+                                <select name="loading_port_id" id="loading_port_id" class="form-control link-style">
+                                    <option/>
+                                    <t t-foreach="ports" t-as="port">
+                                        <option t-esc="port.name" t-att-value="port.id"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="shipping_line_id" class="control-label col-form-label-sm">Shipping Line</label>
+                                <select name="shipping_line_id" class="form-control link-style">
+                                    <option/>
+                                    <t t-foreach="partners" t-as="partner">
+                                        <option t-esc="partner.name" t-att-value="partner.id"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="voyage_no" class="control-label col-form-label-sm">Voyage No.</label>
+                                <input type="text" name="voyage_no" id="voyage_no" class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="vessel_id" class="control-label col-form-label-sm">Vessel</label>
+                                <select name="vessel_id" class="form-control link-style">
+                                    <option/>
+                                    <t t-foreach="vessels" t-as="vessel">
+                                        <option t-esc="vessel.name" t-att-value="vessel.id"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="obl" class="control-label col-form-label-sm">OBL</label>
+                                <input type="text" name="obl" id="obl" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="discharge_port_id" class="control-label col-form-label-sm">Discharge Port</label>
+                                <select name="discharge_port_id" id="discharge_port_id" class="form-control link-style">
+                                    <option/>
+                                    <t t-foreach="ports" t-as="port">
+                                        <option t-esc="port.name" t-att-value="port.id"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ocean_date" class="control-label col-form-label-sm">Date</label>
+                                <input type="date" name="ocean_date" id="ocean_date" placeholder="YYYY-MM-DD" pattern="\d{4}-\d{2}-\d{2}" class="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row shipping_land_type">
+                        <h6 class="mt-2">Main Carriage</h6>
+                        <hr/>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="from_port_id" class="control-label col-form-label-sm">From</label>
+                                <select name="from_port_id" id="from_port_id" class="form-control link-style">
+                                    <option/>
+                                    <t t-foreach="ports" t-as="port">
+                                        <option t-esc="port.name" t-att-value="port.id"/>
+                                    </t>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="to_port_id" class="control-label col-form-label-sm">To</label>
+                                <select name="to_port_id" id="to_port_id" class="form-control link-style">
+                                    <option/>
+                                    <t t-foreach="ports" t-as="port">
+                                        <option t-esc="port.name" t-att-value="port.id"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="land_date" class="control-label col-form-label-sm">Date</label>
+                                <input type="date" name="land_date" id="land_date" placeholder="YYYY-MM-DD" pattern="\d{4}-\d{2}-\d{2}" class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="cmr_rwb_pro" class="control-label col-form-label-sm">CMR/RWB#/Pro#</label>
+                                <input type="text" name="cmr_rwb_pro" id="cmr_rwb_pro" class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="trucker_id" class="control-label col-form-label-sm">Trucker</label>
+                                <select name="trucker_id" class="form-control link-style">
+                                    <option/>
+                                    <t t-foreach="truckers" t-as="trucker">
+                                        <option t-esc="trucker.name" t-att-value="trucker.id"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="trucker_no" class="control-label col-form-label-sm">Trucker No.</label>
+                                <input type="text" name="trucker_no" id="trucker_no" class="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h6 class="mt-2">General</h6>
+                        <hr/>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="barcode" class="control-label col-form-label-sm">Barcode</label>
+                                <input type="text" name="barcode" id="barcode" class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="agent_id" class="control-label col-form-label-sm">Agent</label>
+                                <select name="agent_id" class="form-control link-style">
+                                    <option/>
+                                    <t t-foreach="partners" t-as="partner">
+                                        <option t-esc="partner.name" t-att-value="partner.id"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="user_id" class="control-label col-form-label-sm">User</label>
+                                <select name="user_id" class="form-control link-style">
+                                    <option/>
+                                    <t t-foreach="users" t-as="user">
+                                        <option t-esc="user.name" t-att-value="user.id"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="freight_pc_id" class="control-label col-form-label-sm">Freight PC</label>
+                                <select name="freight_pc_id" class="form-control link-style">
+                                    <option/>
+                                    <t t-foreach="freight_pcs" t-as="freight_pc">
+                                        <option t-esc="freight_pc.name" t-att-value="freight_pc.id"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="freight_other_pc_id" class="control-label col-form-label-sm">Other PC</label>
+                                <select name="freight_other_pc_id" class="form-control link-style">
+                                    <option/>
+                                    <t t-foreach="other_pcs" t-as="other_pc">
+                                        <option t-esc="other_pc.name" t-att-value="other_pc.id"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-form-label-sm" for="file">Attachment File</label>
+                                <input type="file" name="file" id="file" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <br/>
+                            <div class="form-check form-check-inline">
+                                <label class="form-check-label" for="dangerous_goods">Dangerous Goods</label>
+                                <input class="form-check-input" name="dangerous_goods" type="checkbox" id="dangerous_goods" value="True"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="move_type_id" class="control-label col-form-label-sm">Move Type</label>
+                                <select name="move_type_id" class="form-control link-style">
+                                    <option/>
+                                    <t t-foreach="move_types" t-as="move_type">
+                                        <option t-esc="move_type.name" t-att-value="move_type.id"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="tracking_no" class="control-label col-form-label-sm">Tracking No.</label>
+                                <input type="text" name="tracking_no" id="tracking_no" class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="incoterm_id" class="control-label col-form-label-sm">Incoterm</label>
+                                <select name="incoterm_id" class="form-control link-style">
+                                    <option/>
+                                    <t t-foreach="incoterms" t-as="incoterm">
+                                        <option t-esc="incoterm.name" t-att-value="incoterm.id"/>
+                                    </t>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix oe_login_buttons mt-3">
+                        <button type="submit" id="submit_booking" class="btn btn-primary pull-left">Book Now</button>
+                    </div>
+                </form>
+            </div>
+        </t>
+    </template>
+
+    <record id="menu_track_shipment" model="website.menu">
+        <field name="name">Track Shipment</field>
+        <field name="url">/track</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence" type="int">70</field>
+    </record>
+
+    <template id="track_shipment">
+        <title>Freight - Track details</title>
+        <t t-call="website.layout">
+            <div class="oe_structure"/>
+            <div class="container text-center mt-4">
+                <h4>Enter Your Shipment ID</h4>
+            </div>
+            <form class="oe_signup_form" role="form" action="/track/search" method="post">
+                <div class="form-group">
+                    <input type="text" name="name" id="name" class="form-control" placeholder="e.g. HOUSE/2000/23232" required="required"/>
+                </div>
+                <br/>
+                <div class="clearfix oe_login_buttons">
+                    <button type="submit" class="btn btn-success pull-left">Track Details</button>
+                </div>
+            </form>
+        </t>
+    </template>
+
+    <template id="track_details" name="Track Details">
+        <title>Track - <t t-esc="track_name"/>
+        </title>
+        <t t-call="website.layout">
+            <div class="oe_structure">
+                <div class="wrap">
+                    <div class="container">
+                        <table class="table table-bordered mt-4" style="min-width: 100%;" t-if="house">
+                            <tr style="background-color:#714B67;color:#ffffff">
+                                <td colspan="3" class="text-center">
+                                Shipment Details : <t t-esc="track_name"/>
+                                </td>
+                            </tr>
+                            <t t-if="house.transport">
+                                <tr>
+                                    <td>
+                                        <strong>Source Location</strong>
+                                    </td>
+                                    <td>
+                                        <strong>Destination Location</strong>
+                                    </td>
+                                    <td>
+                                        <strong>Main Carriage Transport</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <t t-if="house.transport == 'air'">
+                                        <td>
+                                            <t t-esc="house.gateway_id.name"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="house.destination_id.name"/>
+                                        </td>
+                                        <td>
+                                            <div class="badge bg-success text-wrap">
+                                                <t t-esc="house.transport"/>
+                                            </div>
+                                        </td>
+                                    </t>
+                                    <t t-elif="house.transport == 'ocean'">
+                                        <td>
+                                            <t t-esc="house.loading_port_id.name"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="house.discharge_port_id.name"/>
+                                        </td>
+                                        <td>
+                                            <div class="badge bg-success text-wrap">
+                                                <t t-esc="house.transport"/>
+                                            </div>
+                                        </td>
+                                    </t>
+                                    <t t-elif="house.transport == 'land'">
+                                        <td>
+                                            <t t-esc="house.from_port_id.name"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="house.to_port_id.name"/>
+                                        </td>
+                                        <td>
+                                            <div class="badge bg-success text-wrap">
+                                                <t t-esc="house.transport"/>
+                                            </div>
+                                        </td>
+                                    </t>
+                                    <t t-else="">
+                                        <td colspan="3" class="text-center">No information Provided</td>
+                                    </t>
+                                </tr>
+                            </t>
+                            <tr style="background-color:#714B67;color:#ffffff">
+                                <td colspan="3" class="text-center">
+                                Tracking
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Date</strong>
+                                </td>
+                                <td>
+                                    <strong>Location</strong>
+                                </td>
+                                <td>
+                                    <strong>Activity</strong>
+                                </td>
+                            </tr>
+                            <tbody>
+                                <t t-foreach="track_details" t-as="track">
+                                    <tr>
+                                        <td>
+                                            <t t-esc="track.date"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="track.location"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="track.description"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <table class="table table-bordered mt-4" style="min-width: 100%;" t-else="">
+                            <tr>
+                                <td colspan="3" class="text-center">
+                                Shipment Details : <strong>
+                                    <t t-esc="track_name"/>
+                                </strong> Not Found 
+                                <p class="m-4">
+                                    <strong>
+                                        <a t-attf-href="/track/">Click here</a>
+                                    </strong> for Track New Shipment.</p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </t>
+</template>
+
+</odoo>

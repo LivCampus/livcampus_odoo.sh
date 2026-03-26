@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="freight_port_action" model="ir.actions.act_window">
+        <field name="name">Ports</field>
+        <field name="res_model">freight.port</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">list,kanban,form</field>
+    </record>
+
+    <menuitem name="Freight" id="freight_menu_action" web_icon="bi_freight_management,static/description/icon.png" sequence="1">      
+        <menuitem id="configuration_menu" name="Configuration" sequence="30">
+            <menuitem id="freight_port_menu" name="Ports" action="freight_port_action" sequence="10"/>
+        </menuitem>
+    </menuitem>
+
+    <record id="freight_port_view_form" model="ir.ui.view">
+        <field name="name">freight.port.form</field>
+        <field name="model">freight.port</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="country_id"/>
+                            <field name="fed_state_id"/>
+                        </group>
+                        <group>
+                            <field name="air"/>
+                            <field name="ocean"/>
+                            <field name="land"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="freight_port_view_tree" model="ir.ui.view">
+        <field name="name">freight.port.tree</field>
+        <field name="model">freight.port</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="country_id"/>
+                <field name="fed_state_id"/>
+                <field name="air"/>
+                <field name="ocean"/>
+                <field name="land"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+</odoo>

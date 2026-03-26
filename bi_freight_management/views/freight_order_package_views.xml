@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="freight_order_package_view_form" model="ir.ui.view">
+        <field name="name">freight.order.package.form</field>
+        <field name="model">freight.order.package</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="description"/>
+                            <field name="package_id"/>
+                            <field name="quantity"/>
+                            <field name="operation_value_id"/>
+                            <field name="volume"/>
+                            <field name="gross_weight"/>
+                            <field name="dangerous_goods"/>
+                            <field name="class_number"/>
+                            <field name="un_number"/>
+                            <field name="packaging_group"/>
+                            <field name="imdg_code"/>
+                            <field name="flash_point"/>
+                            <field name="material_desc"/>
+                        </group>
+                        <group>
+                            <field name="harmonize"/>
+                            <field name="temperature"/>
+                            <field name="vgm"/>
+                            <field name="carrier_seal"/>
+                            <field name="shipper_seal"/>
+                            <field name="reference"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="items" string="Items">
+                            <field name="item_ids">
+                                <list create="1" delete="1" string="Freight Orders">
+                                    <field name="description"/>
+                                    <field name="package_id"/>
+                                    <field name="quantity"/>
+                                    <field name="operation_value_id"/>
+                                    <field name="volume"/>
+                                    <field name="gross_weight"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

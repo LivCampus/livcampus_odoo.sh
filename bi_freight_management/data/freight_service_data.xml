@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="action_service_customer_invoice" model="ir.actions.server">
+        <field name="name">Customer Invoice</field>
+        <field name="model_id" ref="bi_freight_management.model_freight_service"/>
+        <field name="binding_model_id" ref="bi_freight_management.model_freight_service" />
+        <field name="state">code</field>
+        <field name="code">action = records.action_generate_customer_invoice()</field>
+    </record>
+
+    <record id="action_service_vendor_bill" model="ir.actions.server">
+        <field name="name">Vendor Bill</field>
+        <field name="model_id" ref="bi_freight_management.model_freight_service"/>
+        <field name="binding_model_id" ref="bi_freight_management.model_freight_service" />
+        <field name="state">code</field>
+        <field name="code">action = records.action_generate_vendor_bill()</field>
+    </record>
+</odoo>
