@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="paperformat_shipping_instruction" model="report.paperformat">
+        <field name="name">Format Shipping Instruction</field>
+        <field name="default" eval="False"/>
+        <field name="format">Letter</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">10</field>
+        <field name="margin_bottom">10</field>
+        <field name="margin_left">10</field>
+        <field name="margin_right">10</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">95</field>
+    </record>
+
+    <record id="action_report_freight_booking" model="ir.actions.report">
+        <field name="name">SHIPPING INSTRUCTION</field>
+        <field name="model">freight.booking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_freight_print.report_freight_booking_document</field>
+        <field name="report_file">custom_freight_print.report_freight_booking_document</field>
+        <field name="print_report_name">'Booking_%s' % (object.name)</field>
+        <field name="binding_model_id" eval="False"/>
+        <field name="paperformat_id" ref="paperformat_shipping_instruction"/>
+    </record>
+
+    <template id="report_freight_booking_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.basic_layout">
+                    <div id="incargo-report-root" class="page incargo-container">
+                        <div class="oe_structure"/>
+
+                        <div class="incargo-banner-container">
+                            <img t-att-src="'/custom_freight_print/static/src/img/Encabezado_incargo.jpeg'" class="incargo-banner-img"/>
+                        </div>
+
+                        <div class="container-fluid mb-3 incargo-header-box">
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <h3 class="incargo-main-title">SHIPPING INSTRUCTION</h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <table class="incargo-spec-table">
+                            <tbody>
+                                <tr>
+                                    <td class="spec-label">Date</td>
+                                    <td class="spec-value">
+                                        <span t-field="doc.date" t-options="{'widget': 'date'}"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="spec-label">Referencia IC</td>
+                                    <td class="spec-value">
+                                        <span t-field="doc.name"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="spec-label">Referencia Cnee / Shipper:</td>
+                                    <td class="spec-value">
+                                        <span t-field="doc.shipper_id.name"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="spec-label">Shipper's information</td>
+                                    <td class="spec-value">
+                                        <span t-field="doc.shipper_id.contact_address"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="spec-label">Consignee's information</td>
+                                    <td class="spec-value">
+                                        <div class="mb-2">
+                                            <span t-field="doc.consignee_id.contact_address"/>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <t t-if="doc.transport == 'ocean'">
+                                    <tr>
+                                        <td class="spec-label">Instruction for HBL. HBL is must with emission at destination</td>
+                                        <td class="spec-value">
+                                            <span t-field="doc.intructions_hbl"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="spec-label">FCL/LCL/AIR</td>
+                                        <td class="spec-value">
+                                            <span t-field="doc.ocean_shipment_type"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="spec-label">POL</td>
+                                        <td class="spec-value">
+                                            <span t-field="doc.loading_port_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="spec-label">POD</td>
+                                        <td class="spec-value">
+                                            <span t-field="doc.discharge_port_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="spec-label">NAVIERA O NVOCC</td>
+                                        <td class="spec-value">
+                                            <span t-field="doc.shipping_line_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="spec-label">VESSEL</td>
+                                        <td class="spec-value">
+                                            <span t-field="doc.vessel_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="spec-label">VOYAGE N°</td>
+                                        <td class="spec-value">
+                                            <span t-field="doc.voyage_no"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="spec-label">OBL</td>
+                                        <td class="spec-value">
+                                            <span t-field="doc.obl"/>
+                                        </td>
+                                    </tr>
+                                </t>
+
+                                <t t-if="doc.transport == 'air'">
+                                    <tr>
+                                        <td class="spec-label">Gateway</td>
+                                        <td class="spec-value">
+                                            <span t-field="doc.gateway_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="spec-label">Destination</td>
+                                        <td class="spec-value">
+                                            <span t-field="doc.destination_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="spec-label">Airline</td>
+                                        <td class="spec-value">
+                                            <span t-field="doc.airline_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="spec-label">Flight No.</td>
+                                        <td class="spec-value">
+                                            <span t-field="doc.flight_no"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="spec-label">MAWB No.</td>
+                                        <td class="spec-value">
+                                            <span t-field="doc.mawb_no"/>
+                                        </td>
+                                    </tr>
+                                </t>
+
+                                <t t-if="doc.transport == 'land'">
+                                    <tr>
+                                        <td class="spec-label">From</td>
+                                        <td class="spec-value">
+                                            <span t-field="doc.from_port_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="spec-label">To</td>
+                                        <td class="spec-value">
+                                            <span t-field="doc.to_port_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="spec-label">FTL/LTL</td>
+                                        <td class="spec-value">
+                                            <span t-field="doc.inland_shipment_type"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="spec-label">Trucker</td>
+                                        <td class="spec-value">
+                                            <span t-field="doc.trucker_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="spec-label">Trucker No.</td>
+                                        <td class="spec-value">
+                                            <span t-field="doc.trucker_no"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="spec-label">CMR / RWB# / PRO#</td>
+                                        <td class="spec-value">
+                                            <span t-field="doc.cmr_rwb_pro"/>
+                                        </td>
+                                    </tr>
+                                </t>
+
+                                <tr>
+                                    <td class="spec-label">AGENTE EN ORIGEN</td>
+                                    <td class="spec-value">
+                                        <span t-field="doc.agent_id.name"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="spec-label">COMMODITY</td>
+                                    <td class="spec-value">
+                                        <span t-field="doc.commodity"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="spec-label">INCONTERM</td>
+                                    <td class="spec-value">
+                                        <span t-field="doc.incoterm_id.code"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="incargo-footer-container">
+                            <img t-att-src="'/custom_freight_print/static/src/img/Pie_pagina_incargo.png'" class="incargo-footer-img"/>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

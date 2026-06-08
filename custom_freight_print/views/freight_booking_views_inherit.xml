@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_freight_booking_form_inherit" model="ir.ui.view">
+        <field name="name">freight.booking.form.inherit</field>
+        <field name="model">freight.booking</field>
+        <field name="inherit_id" ref="bi_freight_management.freight_booking_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='action_convert_shipment']" position="after">
+                <button name="action_button_printreport_freight" type="object" string="Imprimir" icon="fa-print" class="btn-secondary"/>
+            </xpath>
+
+            <xpath expr="//field[@name='consignee_id']" position="after">
+                <field name="intructions_hbl" invisible="transport != 'ocean'"/>
+            </xpath>
+
+            <xpath expr="//field[@name='mawb_no']" position="after">
+                <field name="mbl_destination" invisible="transport != 'air'"/>
+            </xpath>
+
+            <xpath expr="//field[@name='agent_id']" position="after">
+                <field name="commodity"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
