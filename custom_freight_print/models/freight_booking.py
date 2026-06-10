@@ -9,5 +9,14 @@ class FreightBooking(models.Model):
 
     mbl_destination = fields.Char(string='MBL must be SWB or with insuance at destination')
 
+    house_number = fields.Char(string='House Number')
+
+    etd_date = fields.Date(string='ETD')
+
+    freight_payable = fields.Selection([
+    ('collect', 'Collect'),
+    ('prepaid', 'Prepaid')
+], string="Freight Payable")
+
     def action_button_printreport_freight(self):
         return self.env.ref('custom_freight_print.action_report_freight_booking').report_action(self)

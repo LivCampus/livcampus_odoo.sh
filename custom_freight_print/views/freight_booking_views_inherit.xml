@@ -17,8 +17,24 @@
                 <field name="mbl_destination" invisible="transport != 'air'"/>
             </xpath>
 
+            <xpath expr="//field[@name='date']" position="after">
+                <field name="etd_date"/>
+            </xpath>
+
+            <xpath expr="//field[@name='etd_date']" position="after">
+                <field name="house_number"/>
+            </xpath>
+
             <xpath expr="//field[@name='agent_id']" position="after">
                 <field name="commodity"/>
+            </xpath>
+
+            <xpath expr="//field[@name='freight_pc_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='freight_other_pc_id']" position="replace">
+                <field name="freight_payable" widget="selection"/>
             </xpath>
         </field>
     </record>

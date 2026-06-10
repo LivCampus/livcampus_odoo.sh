@@ -47,9 +47,15 @@
                         <table class="incargo-spec-table">
                             <tbody>
                                 <tr>
-                                    <td class="spec-label">Date</td>
+                                    <td class="spec-label">ETA</td>
                                     <td class="spec-value">
                                         <span t-field="doc.date" t-options="{'widget': 'date'}"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="spec-label">ETD</td>
+                                    <td class="spec-value">
+                                        <span t-field="doc.etd_date" t-options="{'widget': 'date'}"/>
                                     </td>
                                 </tr>
                                 <tr>
@@ -80,6 +86,12 @@
                                 </tr>
 
                                 <t t-if="doc.transport == 'ocean'">
+                                    <tr>
+                                        <td class="spec-label">House Number</td>
+                                        <td class="spec-value">
+                                            <span t-field="doc.house_number"/>
+                                        </td>
+                                    </tr>
                                     <tr>
                                         <td class="spec-label">Instruction for HBL. HBL is must with emission at destination</td>
                                         <td class="spec-value">
@@ -123,7 +135,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="spec-label">OBL</td>
+                                        <td class="spec-label">MBL</td>
                                         <td class="spec-value">
                                             <span t-field="doc.obl"/>
                                         </td>
@@ -212,6 +224,12 @@
                                     <td class="spec-label">COMMODITY</td>
                                     <td class="spec-value">
                                         <span t-field="doc.commodity"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="spec-label">FREIGHT PAYABLE</td>
+                                    <td class="spec-value">
+                                        <span t-field="doc.freight_payable"/>
                                     </td>
                                 </tr>
                                 <tr>
