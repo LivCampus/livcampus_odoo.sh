@@ -9,8 +9,8 @@
                     <group>
                         <group>
     <label for="type">
-        <span invisible="transport == 'ocean'">Type</span>
-        <span invisible="transport != 'ocean'">Transhipment Vessel</span>
+        <span invisible="transport == 'Ocean'">Type</span>
+        <span invisible="transport != 'Ocean'">Transhipment Vessel</span>
     </label>
     <field name="type" widget="radio" options="{'vertical': true}" nolabel="1"/>
 </group>
