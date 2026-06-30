@@ -8,8 +8,12 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="type" widget="radio" options="{'vertical': true}"/>
-                        </group>
+    <label for="type">
+        <span invisible="transport == 'ocean'">Type</span>
+        <span invisible="transport != 'ocean'">Transhipment Vessel</span>
+    </label>
+    <field name="type" widget="radio" options="{'vertical': true}" nolabel="1"/>
+</group>
                         <group>
                             <field name="transport" widget="radio" options="{'vertical': true}"/>
                         </group>
