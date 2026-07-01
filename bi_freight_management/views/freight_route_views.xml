@@ -9,8 +9,8 @@
                     <group>
                         <group>
     <label for="type">
-        <span invisible="transport == 'Ocean'">Type</span>
-        <span invisible="transport != 'Ocean'">Transhipment Vessel</span>
+        <span invisible="transport == 'ocean'">Type</span>
+        <span invisible="transport != 'ocean'">Transhipment Vessel</span>
     </label>
     <field name="type" widget="radio" options="{'vertical': true}" nolabel="1"/>
 </group>
@@ -38,6 +38,7 @@
                             <field name="mawb_no" invisible="transport != 'air'"/>
                             <field name="shipping_line_id" invisible="transport != 'ocean'"/>
                             <field name="voyage_no" invisible="transport != 'ocean'"/>
+                            <field name="main_vessel_id" invisible="transport != 'ocean'"/>
                             <field name="vessel_id" invisible="transport != 'ocean'"/>
                             <field name="obl" invisible="transport != 'ocean'"/>
                         </group>
