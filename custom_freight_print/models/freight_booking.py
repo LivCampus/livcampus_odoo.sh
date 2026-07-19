@@ -20,3 +20,12 @@ class FreightBooking(models.Model):
 
     def action_button_printreport_freight(self):
         return self.env.ref('custom_freight_print.action_report_freight_booking').report_action(self)
+    
+    
+    def action_convert_shipment(self):
+       result = super(FreightBooking, self).action_convert_shipment()
+       for booking in self:
+           if booking.etd_date and booking.freight_operation_id:
+               if 'etd_date' in booking.freight_operation_id._fields:
+                   booking.freight_operation_id.write({'etd_date': booking.etd_date})
+       return result
