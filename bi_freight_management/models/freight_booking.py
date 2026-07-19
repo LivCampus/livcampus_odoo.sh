@@ -62,6 +62,35 @@ class FreightBooking(models.Model):
     trucker_id = fields.Many2one('freight.trucker', string='Trucker')
     trucker_no = fields.Char(string='Trucker No')
     freight_operation_id = fields.Many2one('freight.operation', string='Freight Operation')
+    booking_line_ids = fields.One2many('freight.booking.line', 'booking_id', string='Booking Lines')
+    currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
+    amount_untaxed = fields.Monetary(string='Untaxed Amount', currency_field='currency_id', compute='_compute_amounts', store=True)
+    amount_tax = fields.Monetary(string='Taxes', currency_field='currency_id', compute='_compute_amounts', store=True)
+    amount_total = fields.Monetary(string='Total', currency_field='currency_id', compute='_compute_amounts', store=True)
+
+    @api.depends('booking_line_ids', 'booking_line_ids.price_subtotal', 'booking_line_ids.tax_ids')
+    def _compute_amounts(self):
+        for booking in self:
+            amount_untaxed = sum((line.price_subtotal or 0.0) for line in booking.booking_line_ids)
+            amount_tax = 0.0
+            for line in booking.booking_line_ids:
+                if not line.tax_ids:
+                    continue
+                taxes = line.tax_ids
+                try:
+                    tax_result = taxes.compute_all(
+                        line.price_subtotal or 0.0,
+                        currency=booking.currency_id or booking.env.company.currency_id,
+                        quantity=1.0,
+                        product=line.product_id,
+                        partner=booking.shipper_id or booking.consignee_id,
+                    )
+                    amount_tax += (tax_result.get('total_included', 0.0) - tax_result.get('total_excluded', 0.0))
+                except Exception:
+                    amount_tax += 0.0
+            booking.amount_untaxed = amount_untaxed
+            booking.amount_tax = amount_tax
+            booking.amount_total = amount_untaxed + amount_tax
 
     @api.model_create_multi
     def create(self, vals):

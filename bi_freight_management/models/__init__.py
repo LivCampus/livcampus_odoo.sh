@@ -16,5 +16,6 @@ from . import freight_service
 from . import account_move
 from . import freight_tracking
 from . import freight_booking
+from . import freight_booking_line
 from . import sale_order
 from . import freight_operation
