@@ -18,9 +18,9 @@ class FreightBooking(models.Model):
     ('prepaid', 'Prepaid')
 ], string="Freight Payable")
     
-    customer_id = fields.Many2one('res.partner', string='Cliente (Cotización)',
-        help='Contacto al que se dirige la cotización. Puede diferir de Shipper/Consignee.')
-    quote_validity_date = fields.Date(string='Vigencia de la Cotización')
+    #customer_id = fields.Many2one('res.partner', string='Cliente (Cotización)',
+     #   help='Contacto al que se dirige la cotización. Puede diferir de Shipper/Consignee.')
+   # quote_validity_date = fields.Date(string='Vigencia de la Cotización')
 
 
     def action_button_printreport_freight(self):
