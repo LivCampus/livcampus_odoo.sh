@@ -8,8 +8,8 @@
                 <sheet>
                     <group>
                         <group>
-                            <label for="type" string="Type" attrs="{'invisible': [('transport', '=', 'ocean')]}"/>
-                            <label for="type" string="Transhipment Vessel" attrs="{'invisible': [('transport', '!=', 'ocean')]}"/>
+                            <label for="type" string="Type" invisible="transport == 'ocean'"/>
+                            <label for="type" string="Transhipment Vessel" invisible="transport != 'ocean'"/>
                             <field name="type" widget="radio" options="{'vertical': true}"/>
                         </group>
                         <group>
