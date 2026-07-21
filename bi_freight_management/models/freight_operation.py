@@ -82,6 +82,9 @@ class FreightOperation(models.Model):
     trucker_no = fields.Char(string='Trucker No')
     freight_order_ids = fields.One2many(
         'freight.order', 'freight_operation_id', string='Freight Orders')
+    container_number = fields.Char(
+        string='Número de Contenedor', compute='_compute_container_number',
+        search='_search_container_number')
     freight_order_package_ids = fields.One2many('freight.order.package', 'freight_operation_id',
                                                 string='Freight Orders Packages')
     freight_route_ids = fields.One2many(
@@ -119,6 +122,16 @@ class FreightOperation(models.Model):
     quotation_count = fields.Integer(
         string='Quotation Count', compute='_compute_quotation_count')
     color = fields.Integer('Color', default=1)
+
+    @api.depends('freight_order_ids.description')
+    def _compute_container_number(self):
+        for record in self:
+            record.container_number = ', '.join(
+                record.freight_order_ids.mapped('description'))
+
+    def _search_container_number(self, operator, value):
+        return [('freight_order_ids.description', operator, value)]
+
 
     @api.depends('freight_service_ids')
     def _compute_invoice_count(self):

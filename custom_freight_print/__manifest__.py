@@ -8,6 +8,9 @@
     'data': [
         'views/freight_booking_views_inherit.xml',
         'report/freight_booking_report_templates.xml',
+        'report/freight_quotation_report_templates.xml',
+        'views/freight_operation_views_inherit.xml',
+
     ],
     'assets': {
         'web.report_assets_common': [

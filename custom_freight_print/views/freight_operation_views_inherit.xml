@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="freight_operation_house_view_form_inherit" model="ir.ui.view">
+        <field name="name">freight.operation.house.form.inherit</field>
+        <field name="model">freight.operation</field>
+        <field name="inherit_id" ref="bi_freight_management.freight_operation_house_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='date']" position="after">
+                <field name="etd_date"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
