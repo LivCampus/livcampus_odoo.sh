@@ -141,6 +141,26 @@
                             margin-top: 6px;
                             font-size: 9px;
                         }
+                        .incargo-banner-container {
+                            width: 100% !important;
+                            margin-bottom: 8px !important;
+                            text-align: center !important;
+                        }
+                        .incargo-banner-img {
+                            width: 100% !important;
+                            height: auto !important;
+                            display: block !important;
+                        }
+                        .incargo-footer-container {
+                            width: 100% !important;
+                            margin-top: 8px !important;
+                            text-align: center !important;
+                        }
+                        .incargo-footer-img {
+                            width: 100% !important;
+                            height: auto !important;
+                            display: block !important;
+                        }
                     </style>
 
                     <div id="incargo-quote-root" class="page incargo-container">
@@ -259,7 +279,10 @@
                                             <t t-if="is_english">Unit</t>
                                             <t t-else="">Unidad</t>
                                         </th>
-                                        <th style="text-align:center; width:14%;">Tiempo de Tránsito</th>
+                                        <th style="text-align:center; width:14%;">
+                                            <t t-if="is_english">Transit Time</t>
+                                            <t t-else="">Tiempo de Tránsito</t>
+                                        </th>
                                         <th style="text-align:right; width:16%;">
                                             <t t-if="is_english">Unit Price</t>
                                             <t t-else="">Precio Unit.</t>
@@ -325,7 +348,10 @@
                                             <t t-if="is_english">Free days</t>
                                             <t t-else="">Días libres</t>
                                         </th>
-                                        <th style="text-align:center; width:6%;">Tiempo de Tránsito</th>
+                                        <th style="text-align:center; width:6%;">
+                                            <t t-if="is_english">Transit Time</t>
+                                            <t t-else="">Tiempo de Tránsito</t>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -377,7 +403,10 @@
                                             <t t-if="is_english">Unit</t>
                                             <t t-else="">Unidad</t>
                                         </th>
-                                        <th style="text-align:center; width:11%;">Tiempo de Tránsito</th>
+                                        <th style="text-align:center; width:11%;">
+                                            <t t-if="is_english">Transit Time</t>
+                                            <t t-else="">Tiempo de Tránsito</t>
+                                        </th>
                                         <th style="text-align:right; width:14%;">
                                             <t t-if="is_english">Unit Price</t>
                                             <t t-else="">Precio Unit.</t>
