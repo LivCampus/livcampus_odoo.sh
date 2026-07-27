@@ -11,10 +11,6 @@ class FreightBookingLine(models.Model):
     booking_id = fields.Many2one('freight.booking', string='Booking', required=True, ondelete='cascade')
     product_id = fields.Many2one('product.product', string='Product', required=True, domain=[('sale_ok', '=', True)])
     product_tmpl_id = fields.Many2one('product.template', related='product_id.product_tmpl_id', store=True)
-    origin_port_id = fields.Many2one('freight.port', string='Origin Port')
-    destination_port_id = fields.Many2one('freight.port', string='Destination Port')
-    supplier_id = fields.Many2one('res.partner', string='Supplier')
-    supplier_ids = fields.Many2many('res.partner', string='Supplier List', compute='_compute_supplier_ids')
     free_days = fields.Integer(string='Free Days')
     transit_time = fields.Integer(string='Transit Time')
     quantity = fields.Float(string='Quantity', default=1.0)
@@ -23,15 +19,6 @@ class FreightBookingLine(models.Model):
     tax_ids = fields.Many2many('account.tax', string='Taxes')
     price_subtotal = fields.Monetary(string='Amount', currency_field='currency_id', compute='_compute_price_subtotal', store=True)
     currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
-
-    @api.depends('product_id')
-    def _compute_supplier_ids(self):
-        for line in self:
-            if line.product_id and line.product_id.seller_ids:
-                partner_ids = line.product_id.seller_ids.mapped('partner_id').filtered(lambda p: bool(p)).ids
-                line.supplier_ids = [(6, 0, partner_ids)]
-            else:
-                line.supplier_ids = [(6, 0, [])]
 
     @api.depends('quantity', 'price_unit')
     def _compute_price_subtotal(self):
@@ -59,19 +46,6 @@ class FreightBookingLine(models.Model):
             self.tax_ids = [(6, 0, taxes.ids)]
         else:
             self.tax_ids = [(6, 0, [])]
-
-        sellers = getattr(product, 'seller_ids', None)
-        if sellers:
-            seller = sellers[0] if sellers else False
-            if seller and getattr(seller, 'partner_id', False):
-                self.supplier_id = seller.partner_id.id
-            else:
-                self.supplier_id = False
-            partner_ids = sellers.mapped('partner_id').filtered(lambda p: bool(p)).ids if hasattr(sellers, 'mapped') else []
-            self.supplier_ids = [(6, 0, partner_ids)]
-        else:
-            self.supplier_id = False
-            self.supplier_ids = [(6, 0, [])]
 
         if hasattr(product, 'free_days'):
             self.free_days = product.free_days
