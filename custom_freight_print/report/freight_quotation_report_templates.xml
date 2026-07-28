@@ -141,11 +141,31 @@
                             margin-top: 6px;
                             font-size: 9px;
                         }
+                        .incargo-banner-container {
+                            width: 100% !important;
+                            margin-bottom: 8px !important;
+                            text-align: center !important;
+                        }
+                        .incargo-banner-img {
+                            width: 100% !important;
+                            height: auto !important;
+                            display: block !important;
+                        }
+                        .incargo-footer-container {
+                            width: 100% !important;
+                            margin-top: 8px !important;
+                            text-align: center !important;
+                        }
+                        .incargo-footer-img {
+                            width: 100% !important;
+                            height: auto !important;
+                            display: block !important;
+                        }
                     </style>
 
                     <div id="incargo-quote-root" class="page incargo-container">
                         <div class="oe_structure"/>
-                        <t t-set="is_english" t-value="doc.customer_id.lang and doc.customer_id.lang.startswith('en')"/>
+                        <t t-set="is_english" t-value="doc.shipper_id.lang and doc.shipper_id.lang.startswith('en')"/>
 
                         <!-- BANNER SUPERIOR -->
                         <div class="incargo-banner-container">
@@ -167,7 +187,7 @@
                                                 </strong>
                                             </td>
                                             <td style="border:none; padding:2px 0;">
-                                                <span t-field="doc.customer_id.name"/>
+                                                <span t-field="doc.shipper_id.name"/>
                                             </td>
                                         </tr>
                                         <tr>
@@ -178,7 +198,7 @@
                                                 </strong>
                                             </td>
                                             <td style="border:none; padding:2px 0;">
-                                                <t t-foreach="doc.customer_id.child_ids" t-as="contact">
+                                                <t t-foreach="doc.shipper_id.child_ids" t-as="contact">
                                                     <span t-field="contact.name"/>
                                                     <br/>
                                                 </t>
@@ -251,28 +271,23 @@
                                             <t t-if="is_english">Charge Type / Detail</t>
                                             <t t-else="">Tipo de Cargo / Detalle</t>
                                         </th>
-                                        <th style="text-align:center; width:7%;">
-                                            <t t-if="is_english">Origin</t>
-                                            <t t-else="">Origen</t>
-                                        </th>
-                                        <th style="text-align:center; width:7%;">
-                                            <t t-if="is_english">Destination</t>
-                                            <t t-else="">Destino</t>
-                                        </th>
-                                        <th style="text-align:center; width:5%;">
+                                        <th style="text-align:center; width:8%;">
                                             <t t-if="is_english">Qty</t>
                                             <t t-else="">Cant.</t>
                                         </th>
-                                        <th style="text-align:center; width:8%;">
+                                        <th style="text-align:center; width:12%;">
                                             <t t-if="is_english">Unit</t>
                                             <t t-else="">Unidad</t>
                                         </th>
-                                        <th style="text-align:center; width:10%;">Tiempo de Tránsito</th>
-                                        <th style="text-align:right; width:11%;">
+                                        <th style="text-align:center; width:14%;">
+                                            <t t-if="is_english">Transit Time</t>
+                                            <t t-else="">Tiempo de Tránsito</t>
+                                        </th>
+                                        <th style="text-align:right; width:16%;">
                                             <t t-if="is_english">Unit Price</t>
                                             <t t-else="">Precio Unit.</t>
                                         </th>
-                                        <th style="text-align:right; width:11%;">Total</th>
+                                        <th style="text-align:right; width:16%;">Total</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -280,12 +295,6 @@
                                         <tr class="tr-product">
                                             <td class="td-name">
                                                 <span t-esc="line.product_id.name"/>
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <span t-field="line.origin_port_id"/>
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <span t-field="line.destination_port_id"/>
                                             </td>
                                             <td style="text-align:center;">
                                                 <span t-field="line.quantity"/>
@@ -319,12 +328,6 @@
                                             <t t-if="is_english">Name / Detail</t>
                                             <t t-else="">Nombre / Detalle</t>
                                         </th>
-                                        <th style="text-align:center; width:7%;">POL</th>
-                                        <th style="text-align:center; width:7%;">POD</th>
-                                        <th style="text-align:center; width:9%;">
-                                            <t t-if="is_english">Carrier</t>
-                                            <t t-else="">Naviera</t>
-                                        </th>
                                         <th style="text-align:center; width:5%;">
                                             <t t-if="is_english">Qty</t>
                                             <t t-else="">Cant.</t>
@@ -345,7 +348,10 @@
                                             <t t-if="is_english">Free days</t>
                                             <t t-else="">Días libres</t>
                                         </th>
-                                        <th style="text-align:center; width:6%;">Tiempo de Tránsito</th>
+                                        <th style="text-align:center; width:6%;">
+                                            <t t-if="is_english">Transit Time</t>
+                                            <t t-else="">Tiempo de Tránsito</t>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -353,15 +359,6 @@
                                         <tr class="tr-product">
                                             <td class="td-name">
                                                 <span t-esc="line.product_id.name"/>
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <span t-field="line.origin_port_id"/>
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <span t-field="line.destination_port_id"/>
-                                            </td>
-                                            <td style="text-align:center; color:#444;">
-                                                <span t-field="line.supplier_id"/>
                                             </td>
                                             <td style="text-align:center;">
                                                 <span t-field="line.quantity"/>
@@ -398,28 +395,23 @@
                                             <t t-if="is_english">Name / Detail</t>
                                             <t t-else="">Nombre / Detalle</t>
                                         </th>
-                                        <th style="text-align:center; width:8%;">
-                                            <t t-if="is_english">Origin</t>
-                                            <t t-else="">Origen</t>
-                                        </th>
-                                        <th style="text-align:center; width:8%;">
-                                            <t t-if="is_english">Destination</t>
-                                            <t t-else="">Destino</t>
-                                        </th>
-                                        <th style="text-align:center; width:6%;">
+                                        <th style="text-align:center; width:10%;">
                                             <t t-if="is_english">Qty</t>
                                             <t t-else="">Cant.</t>
                                         </th>
-                                        <th style="text-align:center; width:7%;">
+                                        <th style="text-align:center; width:11%;">
                                             <t t-if="is_english">Unit</t>
                                             <t t-else="">Unidad</t>
                                         </th>
-                                        <th style="text-align:center; width:7%;">Tiempo de Tránsito</th>
-                                        <th style="text-align:right; width:10%;">
+                                        <th style="text-align:center; width:11%;">
+                                            <t t-if="is_english">Transit Time</t>
+                                            <t t-else="">Tiempo de Tránsito</t>
+                                        </th>
+                                        <th style="text-align:right; width:14%;">
                                             <t t-if="is_english">Unit Price</t>
                                             <t t-else="">Precio Unit.</t>
                                         </th>
-                                        <th style="text-align:right; width:10%;">
+                                        <th style="text-align:right; width:14%;">
                                             <t t-if="is_english">Amount</t>
                                             <t t-else="">Importe</t>
                                         </th>
@@ -430,12 +422,6 @@
                                         <tr class="tr-product">
                                             <td class="td-name">
                                                 <span t-esc="line.product_id.name"/>
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <span t-field="line.origin_port_id"/>
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <span t-field="line.destination_port_id"/>
                                             </td>
                                             <td style="text-align:center;">
                                                 <span t-field="line.quantity"/>
@@ -463,40 +449,42 @@
                         <!-- ============================================================
                              TOTALES
                              ============================================================ -->
-                        <div class="incargo-totals">
-                            <table>
-                                <tr>
-                                    <td class="total-label">
-                                        <t t-if="is_english">Subtotal:</t>
-                                        <t t-else="">Subtotal:</t>
-                                    </td>
-                                    <td class="total-value">
-                                        <span t-field="doc.amount_untaxed" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
-                                        <span t-esc="doc.currency_id.name"/>
-                                    </td>
-                                </tr>
-                                <tr t-if="doc.amount_tax">
-                                    <td class="total-label">
-                                        <t t-if="is_english">Taxes:</t>
-                                        <t t-else="">Impuestos:</t>
-                                    </td>
-                                    <td class="total-value">
-                                        <span t-field="doc.amount_tax" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
-                                        <span t-esc="doc.currency_id.name"/>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="grand-total-label">
-                                        <t t-if="is_english">TOTAL:</t>
-                                        <t t-else="">TOTAL:</t>
-                                    </td>
-                                    <td class="grand-total-value">
-                                        <span t-field="doc.amount_total" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
-                                        <span t-esc="doc.currency_id.name"/>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
+                        <t t-if="doc.add_total">
+                            <div class="incargo-totals">
+                                <table>
+                                    <tr>
+                                        <td class="total-label">
+                                            <t t-if="is_english">Subtotal:</t>
+                                            <t t-else="">Subtotal:</t>
+                                        </td>
+                                        <td class="total-value">
+                                            <span t-field="doc.amount_untaxed" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                            <span t-esc="doc.currency_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr t-if="doc.amount_tax">
+                                        <td class="total-label">
+                                            <t t-if="is_english">Taxes:</t>
+                                            <t t-else="">Impuestos:</t>
+                                        </td>
+                                        <td class="total-value">
+                                            <span t-field="doc.amount_tax" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                            <span t-esc="doc.currency_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="grand-total-label">
+                                            <t t-if="is_english">TOTAL:</t>
+                                            <t t-else="">TOTAL:</t>
+                                        </td>
+                                        <td class="grand-total-value">
+                                            <span t-field="doc.amount_total" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                            <span t-esc="doc.currency_id.name"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </t>
 
                         <!-- ============================================================
                              TÉRMINOS Y CONDICIONES
@@ -661,7 +649,20 @@
 
                         <!-- PIE DE PÁGINA -->
                         <div class="incargo-footer-container">
-                            <img t-att-src="'/custom_freight_print/static/src/img/Pie_pagina_incargo.png'" class="incargo-footer-img"/>
+                            <t t-if="doc.user_id">
+                                <div style="text-align:center; padding: 6px 0; font-size:10px; color:#333; line-height:1.6;">
+                                    <strong t-esc="doc.user_id.name"/>
+                                    <br/>
+                                    <span t-esc="doc.user_id.partner_id.phone or ''"/>
+                                    <br/>
+                                    <span t-esc="doc.user_id.email or ''"/>
+                                    <br/>
+                                    <span t-esc="doc.user_id.partner_id.function or ''"/>
+                                </div>
+                            </t>
+                            <div style="width:100%; line-height:0; margin:0; padding:0;">
+                                <img t-att-src="'/custom_freight_print/static/src/img/Pie_pagina_incargo.png'" class="incargo-footer-img"/>
+                            </div>
                         </div>
                     </div>
                 </t>

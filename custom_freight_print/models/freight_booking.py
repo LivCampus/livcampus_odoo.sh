@@ -17,10 +17,10 @@ class FreightBooking(models.Model):
     ('collect', 'Collect'),
     ('prepaid', 'Prepaid')
 ], string="Freight Payable")
+
+    add_total = fields.Boolean(string='Agregar total', default=True, help='Si está activo, se incluirá el total en la cotización (Freight Quotation).')
     
-    #customer_id = fields.Many2one('res.partner', string='Cliente (Cotización)',
-     #   help='Contacto al que se dirige la cotización. Puede diferir de Shipper/Consignee.')
-   # quote_validity_date = fields.Date(string='Vigencia de la Cotización')
+    quote_validity_date = fields.Date(string='Vigencia de la Cotización')
 
 
     def action_button_printreport_freight(self):

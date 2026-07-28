@@ -38,13 +38,15 @@
                 <field name="freight_payable" widget="selection"/>
             </xpath>
 
-            <!--<xpath expr="//field[@name='consignee_id']" position="after">
-                <field name="customer_id"/>
-            </xpath>
-
             <xpath expr="//field[@name='house_number']" position="after">
                 <field name="quote_validity_date"/>
-            </xpath> -->
+            </xpath>
+
+            <xpath expr="//field[@name='booking_line_ids']" position="before">
+                <group>
+                    <field name="add_total"/>
+                </group>
+            </xpath>
         </field>
     </record>
 </odoo>

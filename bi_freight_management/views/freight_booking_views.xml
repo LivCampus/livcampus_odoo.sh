@@ -121,23 +121,22 @@
                             <field name="incoterm_id"/>
                         </group>
                     </group>
-                    <separator string="Products / Services"/>
-                    <field name="booking_line_ids">
-                        <list editable="bottom">
-                            <field name="product_id"/>
-                            <field name="origin_port_id"/>
-                            <field name="destination_port_id"/>
-                            <field name="supplier_id"/>
-                            <field name="supplier_ids" widget="many2many_tags" readonly="1"/>
-                            <field name="free_days"/>
-                            <field name="transit_time"/>
-                            <field name="quantity"/>
-                            <field name="product_uom_id"/>
-                            <field name="price_unit"/>
-                            <field name="tax_ids" widget="many2many_tags"/>
-                            <field name="price_subtotal"/>
-                        </list>
-                    </field>
+                    <notebook>
+                        <page string="Ventas">
+                            <field name="booking_line_ids">
+                                <list editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="free_days"/>
+                                    <field name="transit_time"/>
+                                    <field name="quantity"/>
+                                    <field name="product_uom_id"/>
+                                    <field name="price_unit"/>
+                                    <field name="tax_ids" widget="many2many_tags"/>
+                                    <field name="price_subtotal"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
                     <group class="oe_subtotal_footer oe_right" colspan="2">
                         <field name="amount_untaxed" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                         <field name="amount_tax" widget="monetary" options="{'currency_field': 'currency_id'}"/>
