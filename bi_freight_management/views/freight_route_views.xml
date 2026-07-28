@@ -8,6 +8,8 @@
                 <sheet>
                     <group>
                         <group>
+                            <label for="type" string="Type" invisible="transport == 'ocean'"/>
+                            <label for="type" string="Transhipment Vessel" invisible="transport != 'ocean'"/>
                             <field name="type" widget="radio" options="{'vertical': true}"/>
                         </group>
                         <group>
@@ -34,6 +36,7 @@
                             <field name="mawb_no" invisible="transport != 'air'"/>
                             <field name="shipping_line_id" invisible="transport != 'ocean'"/>
                             <field name="voyage_no" invisible="transport != 'ocean'"/>
+                            <field name="main_vessel_id" invisible="transport != 'ocean'"/>
                             <field name="vessel_id" invisible="transport != 'ocean'"/>
                             <field name="obl" invisible="transport != 'ocean'"/>
                         </group>

@@ -22,6 +22,7 @@ class FreightRoute(models.Model):
     _rec_name = 'route_operation'
 
     type = fields.Selection(SELECTION_TYPE, string='Type', required=True)
+    main_vessel_id = fields.Many2one('freight.vessel', string='Main Vessel')
     route_operation = fields.Char('Route Operation')
     source = fields.Char('Source Location')
     destination = fields.Char('Destination Location')

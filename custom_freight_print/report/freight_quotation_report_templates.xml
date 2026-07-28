@@ -1,0 +1,672 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_freight_quotation" model="ir.actions.report">
+        <field name="name">COTIZACIÓN</field>
+        <field name="model">freight.booking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">custom_freight_print.report_freight_quotation_document</field>
+        <field name="report_file">custom_freight_print.report_freight_quotation_document</field>
+        <field name="print_report_name">'Cotizacion_%s' % (object.name)</field>
+        <field name="binding_model_id" eval="False"/>
+        <field name="paperformat_id" ref="paperformat_shipping_instruction"/>
+    </record>
+
+    <template id="report_freight_quotation_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.basic_layout">
+                    <style type="text/css">
+                        .incargo-container {
+                            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+                            color: #2b2b2b !important;
+                            font-size: 11px !important;
+                        }
+                        .incargo-header-box {
+                            border-top: 3px solid #006053;
+                            background-color: #fcfcfc;
+                            padding: 12px;
+                        }
+                        .incargo-header-meta {
+                            font-size: 11px;
+                            line-height: 1.6;
+                        }
+                        .incargo-header-meta strong {
+                            color: #064039;
+                        }
+                        .incargo-folio {
+                            font-size: 14px;
+                            color: #064039;
+                            font-weight: bold;
+                        }
+                        .incargo-badge {
+                            display: inline-block;
+                            background-color: #064039;
+                            color: #ffffff;
+                            font-size: 9px;
+                            font-weight: bold;
+                            padding: 2px 7px;
+                            border-radius: 3px;
+                            letter-spacing: 0.4px;
+                            -webkit-print-color-adjust: exact;
+                        }
+                        .incargo-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-bottom: 8px;
+                        }
+                        .incargo-table th {
+                            background-color: #064039 !important;
+                            color: #ffffff !important;
+                            text-align: center;
+                            font-weight: bold;
+                            font-size: 10px;
+                            padding: 5px 6px !important;
+                            border: 1px solid #042925 !important;
+                            -webkit-print-color-adjust: exact;
+                        }
+                        .incargo-table td {
+                            border: 1px solid #b2ccc9 !important;
+                            padding: 5px 6px !important;
+                            text-align: center;
+                            font-size: 10.5px;
+                            vertical-align: top;
+                        }
+                        .incargo-table td.td-name {
+                            text-align: left;
+                            white-space: pre-line;
+                        }
+                        .incargo-table td.td-amount {
+                            text-align: right;
+                            font-weight: bold;
+                        }
+                        .incargo-table tbody tr.tr-product:nth-child(even) {
+                            background-color: #f7fbfa;
+                        }
+                        .incargo-totals {
+                            margin-top: 4px;
+                            text-align: right;
+                            font-size: 11px;
+                        }
+                        .incargo-totals table {
+                            margin-left: auto;
+                            border: none;
+                        }
+                        .incargo-totals td {
+                            border: none !important;
+                            padding: 2px 4px !important;
+                        }
+                        .incargo-totals .total-label {
+                            text-align: right;
+                            color: #444;
+                        }
+                        .incargo-totals .total-value {
+                            text-align: right;
+                            font-weight: bold;
+                            min-width: 120px;
+                        }
+                        .incargo-totals .grand-total-label {
+                            text-align: right;
+                            font-weight: bold;
+                            color: #064039;
+                            font-size: 12px;
+                        }
+                        .incargo-totals .grand-total-value {
+                            text-align: right;
+                            font-weight: bold;
+                            color: #064039;
+                            font-size: 12px;
+                        }
+                        .text-legal-section {
+                            font-size: 8.5px !important;
+                            line-height: 1.3 !important;
+                            color: #333333;
+                            text-align: justify;
+                            border-top: 1px solid #ccc;
+                            padding-top: 8px;
+                            margin-top: 10px;
+                        }
+                        .text-legal-section ul {
+                            padding-left: 10px !important;
+                            margin-bottom: 5px !important;
+                            margin-top: 2px !important;
+                        }
+                        .text-legal-section li {
+                            list-style-type: none !important;
+                            margin-bottom: 2px !important;
+                        }
+                        .green-title {
+                            color: #064039 !important;
+                            font-weight: bold;
+                            margin-bottom: 2px;
+                            margin-top: 6px;
+                            font-size: 9px;
+                        }
+                        .incargo-banner-container {
+                            width: 100% !important;
+                            margin-bottom: 8px !important;
+                            text-align: center !important;
+                        }
+                        .incargo-banner-img {
+                            width: 100% !important;
+                            height: auto !important;
+                            display: block !important;
+                        }
+                        .incargo-footer-container {
+                            width: 100% !important;
+                            margin-top: 8px !important;
+                            text-align: center !important;
+                        }
+                        .incargo-footer-img {
+                            width: 100% !important;
+                            height: auto !important;
+                            display: block !important;
+                        }
+                    </style>
+
+                    <div id="incargo-quote-root" class="page incargo-container">
+                        <div class="oe_structure"/>
+                        <t t-set="is_english" t-value="doc.shipper_id.lang and doc.shipper_id.lang.startswith('en')"/>
+
+                        <!-- BANNER SUPERIOR -->
+                        <div class="incargo-banner-container">
+                            <img t-att-src="'/custom_freight_print/static/src/img/Encabezado_incargo.jpeg'" class="incargo-banner-img"/>
+                        </div>
+
+                        <!-- ============================================================
+                             ENCABEZADO
+                             ============================================================ -->
+                        <div class="container-fluid mb-3 incargo-header-box">
+                            <div class="row">
+                                <div class="col-7 incargo-header-meta">
+                                    <table style="width:100%; border:none;">
+                                        <tr>
+                                            <td style="border:none; padding:2px 6px 2px 0; width:90px;">
+                                                <strong>
+                                                    <t t-if="is_english">Company:</t>
+                                                    <t t-else="">Empresa:</t>
+                                                </strong>
+                                            </td>
+                                            <td style="border:none; padding:2px 0;">
+                                                <span t-field="doc.shipper_id.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border:none; padding:2px 6px 2px 0;">
+                                                <strong>
+                                                    <t t-if="is_english">Attention:</t>
+                                                    <t t-else="">Atención:</t>
+                                                </strong>
+                                            </td>
+                                            <td style="border:none; padding:2px 0;">
+                                                <t t-foreach="doc.shipper_id.child_ids" t-as="contact">
+                                                    <span t-field="contact.name"/>
+                                                    <br/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border:none; padding:2px 6px 2px 0;">
+                                                <strong>
+                                                    <t t-if="is_english">Traffic:</t>
+                                                    <t t-else="">Tráfico:</t>
+                                                </strong>
+                                            </td>
+                                            <td style="border:none; padding:2px 0;">
+                                                <t t-if="doc.transport">
+                                                    <span class="incargo-badge" t-field="doc.transport"/>
+                                                </t>
+                                                <t t-if="doc.direction">
+                                                    <span class="incargo-badge" t-field="doc.direction"/>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-5 text-right text-end incargo-header-meta">
+                                    <p class="mb-1 incargo-folio">
+                                        N°
+                                        <span t-field="doc.name"/>
+                                    </p>
+                                    <p class="mb-0 text-muted">
+                                        <t t-if="is_english">Date:</t>
+                                        <t t-else="">Fecha de la cotización:</t>
+                                        <span t-field="doc.create_date" t-options="{&quot;widget&quot;: &quot;date&quot;}"/>
+                                    </p>
+                                    <p class="mb-0 text-muted" t-if="doc.quote_validity_date">
+                                        <t t-if="is_english">Validity:</t>
+                                        <t t-else="">Vigencia:</t>
+                                        <span t-field="doc.quote_validity_date" t-options="{&quot;widget&quot;: &quot;date&quot;}"/>
+                                    </p>
+                                    <p class="mb-0 text-muted" t-if="doc.currency_id">
+                                        <t t-if="is_english">Currency:</t>
+                                        <t t-else="">Moneda:</t>
+                                        <span t-field="doc.currency_id.name"/>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ============================================================
+                             TEXTO DE INTRODUCCIÓN
+                             ============================================================ -->
+                        <p class="mb-2" style="font-size:11px;">
+                            <t t-if="is_english">
+                                Further to your request, please find below our quotation for the freight service
+                                of your goods, in accordance with the specifications provided:
+                            </t>
+                            <t t-else="">
+                                En seguimiento a su solicitud, nos permitimos presentar la cotización correspondiente al servicio de transporte de su mercancía, conforme a las especificaciones proporcionadas:
+                            </t>
+                        </p>
+
+                        <!-- ============================================================
+                             TABLA DE CARGOS — condicional por transport
+                             ============================================================ -->
+                        <!-- ——— TABLA AÉREO ——— -->
+                        <t t-if="doc.transport == 'air'">
+                            <table class="incargo-table">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align:left; width:30%;">
+                                            <t t-if="is_english">Charge Type / Detail</t>
+                                            <t t-else="">Tipo de Cargo / Detalle</t>
+                                        </th>
+                                        <th style="text-align:center; width:8%;">
+                                            <t t-if="is_english">Qty</t>
+                                            <t t-else="">Cant.</t>
+                                        </th>
+                                        <th style="text-align:center; width:12%;">
+                                            <t t-if="is_english">Unit</t>
+                                            <t t-else="">Unidad</t>
+                                        </th>
+                                        <th style="text-align:center; width:14%;">
+                                            <t t-if="is_english">Transit Time</t>
+                                            <t t-else="">Tiempo de Tránsito</t>
+                                        </th>
+                                        <th style="text-align:right; width:16%;">
+                                            <t t-if="is_english">Unit Price</t>
+                                            <t t-else="">Precio Unit.</t>
+                                        </th>
+                                        <th style="text-align:right; width:16%;">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="doc.booking_line_ids" t-as="line">
+                                        <tr class="tr-product">
+                                            <td class="td-name">
+                                                <span t-esc="line.product_id.name"/>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <span t-field="line.quantity"/>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <span t-if="line.product_uom_id" t-field="line.product_uom_id.name"/>
+                                            </td>
+                                            <td style="text-align:center; color:#444;">
+                                                <span t-field="line.transit_time"/>
+                                            </td>
+                                            <td style="text-align:right; color:#444;">
+                                                <span t-field="line.price_unit" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                                <span t-esc="doc.currency_id.name"/>
+                                            </td>
+                                            <td class="td-amount">
+                                                <span t-field="line.price_subtotal" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                                <span t-esc="doc.currency_id.name"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+
+                        <!-- ——— TABLA MARÍTIMO ——— -->
+                        <t t-if="doc.transport == 'ocean'">
+                            <table class="incargo-table">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align:left; width:20%;">
+                                            <t t-if="is_english">Name / Detail</t>
+                                            <t t-else="">Nombre / Detalle</t>
+                                        </th>
+                                        <th style="text-align:center; width:5%;">
+                                            <t t-if="is_english">Qty</t>
+                                            <t t-else="">Cant.</t>
+                                        </th>
+                                        <th style="text-align:center; width:6%;">
+                                            <t t-if="is_english">Unit</t>
+                                            <t t-else="">Unidad</t>
+                                        </th>
+                                        <th style="text-align:right; width:9%;">
+                                            <t t-if="is_english">Unit Price</t>
+                                            <t t-else="">Precio Unit.</t>
+                                        </th>
+                                        <th style="text-align:right; width:9%;">
+                                            <t t-if="is_english">Amount</t>
+                                            <t t-else="">Importe</t>
+                                        </th>
+                                        <th style="text-align:center; width:6%;">
+                                            <t t-if="is_english">Free days</t>
+                                            <t t-else="">Días libres</t>
+                                        </th>
+                                        <th style="text-align:center; width:6%;">
+                                            <t t-if="is_english">Transit Time</t>
+                                            <t t-else="">Tiempo de Tránsito</t>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="doc.booking_line_ids" t-as="line">
+                                        <tr class="tr-product">
+                                            <td class="td-name">
+                                                <span t-esc="line.product_id.name"/>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <span t-field="line.quantity"/>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <span t-if="line.product_uom_id" t-field="line.product_uom_id.name"/>
+                                            </td>
+                                            <td style="text-align:right; color:#444;">
+                                                <span t-field="line.price_unit" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                                <span t-esc="doc.currency_id.name"/>
+                                            </td>
+                                            <td class="td-amount">
+                                                <span t-field="line.price_subtotal" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                                <span t-esc="doc.currency_id.name"/>
+                                            </td>
+                                            <td style="text-align:center; color:#444;">
+                                                <span t-field="line.free_days"/>
+                                            </td>
+                                            <td style="text-align:center; color:#444;">
+                                                <span t-field="line.transit_time"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+
+                        <!-- ——— TABLA TERRESTRE ——— -->
+                        <t t-if="doc.transport == 'land'">
+                            <table class="incargo-table">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align:left; width:24%;">
+                                            <t t-if="is_english">Name / Detail</t>
+                                            <t t-else="">Nombre / Detalle</t>
+                                        </th>
+                                        <th style="text-align:center; width:10%;">
+                                            <t t-if="is_english">Qty</t>
+                                            <t t-else="">Cant.</t>
+                                        </th>
+                                        <th style="text-align:center; width:11%;">
+                                            <t t-if="is_english">Unit</t>
+                                            <t t-else="">Unidad</t>
+                                        </th>
+                                        <th style="text-align:center; width:11%;">
+                                            <t t-if="is_english">Transit Time</t>
+                                            <t t-else="">Tiempo de Tránsito</t>
+                                        </th>
+                                        <th style="text-align:right; width:14%;">
+                                            <t t-if="is_english">Unit Price</t>
+                                            <t t-else="">Precio Unit.</t>
+                                        </th>
+                                        <th style="text-align:right; width:14%;">
+                                            <t t-if="is_english">Amount</t>
+                                            <t t-else="">Importe</t>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="doc.booking_line_ids" t-as="line">
+                                        <tr class="tr-product">
+                                            <td class="td-name">
+                                                <span t-esc="line.product_id.name"/>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <span t-field="line.quantity"/>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <span t-if="line.product_uom_id" t-field="line.product_uom_id.name"/>
+                                            </td>
+                                            <td style="text-align:center; color:#444;">
+                                                <span t-field="line.transit_time"/>
+                                            </td>
+                                            <td style="text-align:right; color:#444;">
+                                                <span t-field="line.price_unit" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                                <span t-esc="doc.currency_id.name"/>
+                                            </td>
+                                            <td class="td-amount">
+                                                <span t-field="line.price_subtotal" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                                <span t-esc="doc.currency_id.name"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+
+                        <!-- ============================================================
+                             TOTALES
+                             ============================================================ -->
+                        <t t-if="doc.add_total">
+                            <div class="incargo-totals">
+                                <table>
+                                    <tr>
+                                        <td class="total-label">
+                                            <t t-if="is_english">Subtotal:</t>
+                                            <t t-else="">Subtotal:</t>
+                                        </td>
+                                        <td class="total-value">
+                                            <span t-field="doc.amount_untaxed" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                            <span t-esc="doc.currency_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr t-if="doc.amount_tax">
+                                        <td class="total-label">
+                                            <t t-if="is_english">Taxes:</t>
+                                            <t t-else="">Impuestos:</t>
+                                        </td>
+                                        <td class="total-value">
+                                            <span t-field="doc.amount_tax" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                            <span t-esc="doc.currency_id.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="grand-total-label">
+                                            <t t-if="is_english">TOTAL:</t>
+                                            <t t-else="">TOTAL:</t>
+                                        </td>
+                                        <td class="grand-total-value">
+                                            <span t-field="doc.amount_total" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                            <span t-esc="doc.currency_id.name"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </t>
+
+                        <!-- ============================================================
+                             TÉRMINOS Y CONDICIONES
+                             Condicionales por: transport + idioma (is_english)
+                             ============================================================ -->
+                        <!-- ——— T&amp;C AÉREO EN INGLÉS ——— -->
+                        <t t-if="doc.transport == 'air' and is_english">
+                            <div class="container-fluid text-legal-section">
+                                <div class="green-title">Charge / Price Conditions:</div>
+                                <ul>
+                                    <li>* The quoted charges/price are estimates based on chargeable weight, i.e. either based on actual gross weight or volumetric weight, whichever is higher. Final charges/price will be based on the chargeable weight determined by the airline at check-in/lodging.</li>
+                                    <li>* The quoted services and charges/price are subject to space being available with the airline(s), the airline(s)'s acceptance of the shipment and the shipper/consignee timely making the shipment available for collection at the agreed location and providing complete and accurate documents and information necessary to carry out the service.</li>
+                                    <li>* A cancellation fee of USD 75 per quotation as well as any and all costs, expenses and losses incurred by Kuuch Logistics or Kuuch Logistics Group / Agent affiliate(s) will be charged if the order is cancelled after confirming this quotation.</li>
+                                    <li>* "HYGIENE (Medical / PPE) Product" shipments shall be paid in full in advance.</li>
+                                    <li>* If Kuuch Logistics / Agent affiliate(s) is required to arrange customs clearance in the USA, a Single Entry Bond Fee may apply when IOR does not have a Continuous Bond, at the rate of: USD $5.75 per every USD $1,000 of the shipment's commercial value + duties (minimum charge USD 85).</li>
+                                </ul>
+                                <div class="green-title">Additional Disclaimer:</div>
+                                <ul>
+                                    <li>* Quotation is based on current ticket price &amp; availability which is subject to change without notice. The quoted schedule is subject to the airline's final acceptance of the shipment's commodity, pieces, and weights upon courier check-in.</li>
+                                    <li>* This quotation assumes shipper and consignee can provide all export and import docs required for clearance. Kuuch Logistics reserves the right to re-quote for any changes on account billing location.</li>
+                                    <li>* Self-declaration for certain shipments is still possible in Mexico, but formal clearance is strongly recommended to ensure smooth arrival. In the case of delays or bonding due to self-declaration, Kuuch Logistics will not be held responsible or liable.</li>
+                                    <li>* Upon receipt of confirmation, Kuuch Logistics will proceed to arrange collection, purchase tickets and position our courier. Should the shipment be cancelled after confirmation, a Cancellation Fee will be applied (full ticket fare + any other costs incurred) along with a USD 75/job cancellation handling fee.</li>
+                                    <li>* Please note there will be a 16% tax added on the invoice amount if billed to a Mexican company.</li>
+                                    <li>* The above flight schedule and quotation is subject to the shipper being registered with China Customs at the specified port of exit, and assumes all relevant customs documents (originals) can be made available for formal declaration prior to departure.</li>
+                                </ul>
+                            </div>
+                        </t>
+                        <!-- ——— T&amp;C AÉREO EN ESPAÑOL ——— -->
+                        <t t-if="doc.transport == 'air' and not is_english">
+                            <div class="container-fluid text-legal-section">
+                                <div class="green-title">Condiciones de Precio:</div>
+                                <ul>
+                                    <li>* Los cargos cotizados son estimados con base en el peso facturable, ya sea el peso bruto real o el peso volumétrico, el que resulte mayor. Los cargos finales se determinarán en el check-in/embarque con la aerolínea.</li>
+                                    <li>* Los servicios y cargos cotizados están sujetos a disponibilidad de espacio con la(s) aerolínea(s) y a la aceptación del embarque, así como a que el embarcador/consignatario entregue la mercancía en tiempo y forma en el lugar acordado.</li>
+                                    <li>* En caso de cancelar la orden después de confirmar esta cotización, se cobrará una penalización de USD 75 más cualquier costo, gasto o pérdida incurrida por Kuuch Logistics o sus afiliados.</li>
+                                    <li>* Los embarques de productos de HIGIENE (Médico / EPP) deberán pagarse en su totalidad por anticipado.</li>
+                                    <li>* Si Kuuch Logistics debe gestionar el despacho aduanero en EUA y el IOR no cuenta con una Fianza Continua, se aplicará una Fianza de Entrada Simple: USD $5.75 por cada USD $1,000 del valor comercial del embarque + aranceles (mínimo USD 85).</li>
+                                </ul>
+                                <div class="green-title">Aviso Adicional:</div>
+                                <ul>
+                                    <li>* La cotización se basa en el precio de boleto y disponibilidad actuales, sujetos a cambio sin previo aviso. El itinerario cotizado está sujeto a la aceptación final de la aerolínea respecto a mercancía, bultos y pesos en el check-in del mensajero.</li>
+                                    <li>* Esta cotización asume que el embarcador y consignatario pueden proporcionar todos los documentos de exportación e importación requeridos para el despacho aduanal.</li>
+                                    <li>* La autodeclaración sigue siendo posible en México para ciertos embarques, pero se recomienda el despacho formal. En caso de demoras o fianzas por autodeclaración, Kuuch Logistics no será responsable.</li>
+                                    <li>* Al recibir la confirmación, Kuuch Logistics procederá a gestionar la recolección, adquirir boletos y posicionar al mensajero. En caso de cancelación posterior a la confirmación, se aplicará la tarifa completa del boleto + costos incurridos + USD 75 por cancelación.</li>
+                                    <li>* Se añadirá un 16% de impuesto al monto de la factura si se factura a una empresa mexicana.</li>
+                                    <li>* El itinerario y la cotización están condicionados a que el embarcador esté registrado en la Aduana China en el puerto de salida especificado, y a que los documentos aduanales originales estén disponibles antes de la salida.</li>
+                                </ul>
+                            </div>
+                        </t>
+
+                        <!-- ——— T&amp;C MARÍTIMO EN ESPAÑOL ——— -->
+                        <t t-if="doc.transport == 'ocean' and not is_english">
+                            <div class="container-fluid text-legal-section">
+                                <div class="green-title">Reservas Flete Internacional:</div>
+                                <ul>
+                                    <li>*Tarifas aplican con base en fecha de ETD una vez confirmado el Booking, siempre y cuando se mantenga el Buque.</li>
+                                    <li>*Tarifa sujeta a cambio sin previo aviso por parte de la naviera.</li>
+                                    <li>*Tarifa válida para carga general (No aplica DGR, REFFER, ETC).</li>
+                                    <li>*No incluye IVA para cargos en destino.</li>
+                                    <li>* Seguro de la carga al .50% sobre valor asegurado + seguro de contenedor USD 25. Tarifa mínima: 100 USD + seguro del contenedor.</li>
+                                    <li>*La tarifa no incluye despacho aduanero, impuestos, maniobras, almacenajes, custodias o cualquier otro concepto no estipulado en esta cotización.</li>
+                                    <li>*Los contenedores y mercancías viajan por cuenta y responsabilidad el importado.</li>
+                                    <li>* La reserva del servicio deberá ser mínimo con 2 semanas de anticipación para poder garantizar el espacio.</li>
+                                </ul>
+                                <div class="green-title">Reservas Flete Nacional (Fuera de BL):</div>
+                                <ul>
+                                    <li>* Esta propuesta no incluye gastos de servicios de carga y descarga, investigaciones especiales, trámites, certificaciones y demás servicios que no se mencionen; en caso de ser necesarias se tendrá un costo preferencial para su empresa.</li>
+                                    <li>*Incluye monitoreo Activo con atención personalizada 24/7/365.</li>
+                                    <li>*A las tarifas indicadas se deben agregar impuestos al momento de facturar.</li>
+                                    <li>*Tarifas de maniobra por subir o bajar contenedores $600.00 más IVA, (Incluye siete días libres de almacenaje).</li>
+                                    <li>*Tarifa por burreo de contenedor $1,500.00 más IVA.</li>
+                                    <li>*La tarifa indicada ya incluye en ingreso de vacíos en puerto LZC.</li>
+                                    <li>*La tarifa en base full está considerada únicamente para retirar ambos contenedores de una sola terminal, en caso de que sean terminales distintas aplica costo extra de $1,800.00 + IMP.</li>
+                                    <li>* Flete Falso $3,000 sea sencillo o full.</li>
+                                    <li>* 12 Hrs en full, 8 Hrs en sencillo libres para descarga; después de lo establecido se aplicará costo extra de $2,500.00 más IVA por contenedor por cada 6 hrs de retraso.</li>
+                                    <li>* El costo del sobrepeso será de $1,500.00 más impuestos por tonelada; las derivaciones por el exceso de peso, multas, corralón, arrastre, etc., serán cubiertas por el cliente (25 tn en sencillo y 45 tn en full, ya con tara incluida).</li>
+                                    <li>*La cotización se basa en las condiciones actuales de ruta; cualquier cambio y/o obstáculo nuevo tendrá que someterse a consideración.</li>
+                                    <li>* De acuerdo con la novena cláusula de la carta porte, la mercancía y contenedores viajan por cuenta y riesgo del cliente. Los seguros y deducibles de la mercancía durante el transporte y maniobras son por cuenta y riesgo del cliente. Kuuch Logistics México no se hace responsable por robo o daño de esta.</li>
+                                    <li>*Por ningún motivo podemos absorber descuentos, o gastos ocasionados por retrasos en la entrega de su mercancía originados por causas de fuerza mayor averías inesperadas, huelgas, manifestaciones o cualquier otro imprevisto.</li>
+                                    <li>*El personal del transporte tiene prohibido abrir puertas y/o romper candados de contenedores, esta responsabilidad es totalmente del almacén y/o cliente, por lo que nos deslindamos de cualquier faltante que pudiera existir en la mercancía puesto a que presentamos candados/sellos sin violaciones.</li>
+                                </ul>
+                            </div>
+                        </t>
+                        <!-- ——— T&amp;C MARÍTIMO EN INGLÉS ——— -->
+                        <t t-if="doc.transport == 'ocean' and is_english">
+                            <div class="container-fluid text-legal-section">
+                                <div class="green-title">International Freight Reservations:</div>
+                                <ul>
+                                    <li>* Rates apply based on ETD date once Booking is confirmed, provided the vessel remains unchanged.</li>
+                                    <li>* Rates subject to change without prior notice by the shipping line.</li>
+                                    <li>* Rate valid for general cargo only (Does not apply to DGR, REEFER, etc.).</li>
+                                    <li>* Does not include VAT for destination charges.</li>
+                                    <li>* Cargo insurance at .50% over insured value + container insurance USD 25. Minimum rate: USD 100 + container insurance.</li>
+                                    <li>* Rate does not include customs clearance, taxes, handling, storage, custody, or any other concept not stipulated in this quotation.</li>
+                                    <li>* Containers and goods travel at the importer's account and responsibility.</li>
+                                    <li>* Service reservation must be made at least 2 weeks in advance to guarantee space.</li>
+                                </ul>
+                                <div class="green-title">Domestic Freight Reservations (Out of BL):</div>
+                                <ul>
+                                    <li>* This proposal does not include loading/unloading services, special investigations, procedures, certifications or any other services not mentioned; if required, preferential rates will apply.</li>
+                                    <li>* Includes active monitoring with personalized attention 24/7/365.</li>
+                                    <li>* Taxes must be added to the indicated rates at the time of invoicing.</li>
+                                    <li>* Container handling fees (loading/unloading): $600.00 + VAT (includes seven free storage days).</li>
+                                    <li>* Container drayage fee: $1,500.00 + VAT.</li>
+                                    <li>* Rate already includes empty container return at LZC port.</li>
+                                    <li>* Full-load rate is based on retrieving both containers from a single terminal; different terminals incur an extra charge of $1,500.00 + taxes.</li>
+                                    <li>* Empty freight: $3,000 whether single or full unit.</li>
+                                    <li>* 12 hrs free for full units, 8 hrs for single units for unloading; exceeding these times incurs $2,500.00 + VAT per container per 6 hrs of delay.</li>
+                                    <li>* Overweight cost: $1,500.00 + taxes per excess ton; fines, impound, towing and any other derived costs are covered by the client (25 tn single, 45 tn full, tare included).</li>
+                                    <li>* Quotation is based on current route conditions; any new change or obstacle must be reconsidered.</li>
+                                    <li>* Per the ninth clause of the bill of lading, goods and containers travel at the client's account and risk. Insurance and deductibles during transport and handling are the client's responsibility. Kuuch Logistics México is not liable for theft or damage.</li>
+                                    <li>* Under no circumstances can we absorb discounts or expenses caused by delivery delays due to force majeure, unexpected breakdowns, strikes, protests or any other unforeseen event.</li>
+                                    <li>* Transport personnel are prohibited from opening doors or breaking container locks; this is entirely the warehouse's and/or client's responsibility. We disclaim any liability for missing goods, as we deliver with intact locks/seals.</li>
+                                </ul>
+                            </div>
+                        </t>
+
+                        <!-- ——— T&amp;C TERRESTRE EN ESPAÑOL ——— -->
+                        <t t-if="doc.transport == 'land' and not is_english">
+                            <div class="container-fluid text-legal-section">
+                                <div class="green-title">Reservas:</div>
+                                <ul>
+                                    <li>* Se otorgan 4 días hábiles libres de demora; costo por día adicional: 70 USD.</li>
+                                    <li>* La reserva del servicio deberá ser mínimo con una semana de anticipación para poder garantizar el espacio.</li>
+                                    <li>* Tarifa sujeta a cambio sin previo aviso por parte de la línea transportista.</li>
+                                    <li>* Tarifa válida para carga general.</li>
+                                    <li>* No incluye cargos en destino.</li>
+                                    <li>* No incluye seguro de la carga.</li>
+                                    <li>*La tarifa no incluye despacho aduanero, impuestos, maniobras, almacenajes, custodias o cualquier otro concepto no estipulado en esta cotización.</li>
+                                    <li>* Condiciones de pago: 15 días a partir de la presentación de la factura.</li>
+                                    <li>* Estos cargos son más IVA menos retención.</li>
+                                    <li>*Incluye monitoreo Activo con atención personalizada 24/7/365.</li>
+                                    <li>*La cotización se basa en las condiciones actuales de ruta; cualquier cambio y/o obstáculo nuevo tendrá que someterse a consideración.</li>
+                                    <li>*De acuerdo con la novena cláusula de la carta porte, la mercancía y contenedores viajan por cuenta y riesgo del cliente. Los seguros y deducibles de la mercancía durante el transporte y maniobras son por cuenta y riesgo del cliente. Kuuch Logistics/Incargo.Mx México no se hace responsable por robo o daño de esta.</li>
+                                    <li>*Por ningún motivo podemos absorber descuentos, o gastos ocasionados por retrasos en la entrega de su mercancía originados por causas de fuerza mayor averías inesperadas, huelgas, manifestaciones o cualquier otro imprevisto.</li>
+                                    <li>*El personal del transporte tiene prohibido abrir puertas y/o romper candados de contenedores, esta responsabilidad es totalmente del almacén y/o cliente, por lo que nos deslindamos de cualquier faltante que pudiera existir en la mercancía puesto a que presentamos candados/sellos sin violaciones.</li>
+                                </ul>
+                            </div>
+                        </t>
+                        <!-- ——— T&amp;C TERRESTRE EN INGLÉS ——— -->
+                        <t t-if="doc.transport == 'land' and is_english">
+                            <div class="container-fluid text-legal-section">
+                                <div class="green-title">Reservations:</div>
+                                <ul>
+                                    <li>* 4 free business days are granted for delays; cost per additional day: USD 70.</li>
+                                    <li>* Service reservation must be made at least one week in advance to guarantee space.</li>
+                                    <li>* Rate subject to change without prior notice by the carrier.</li>
+                                    <li>* Rate valid for general cargo only.</li>
+                                    <li>* Does not include destination charges.</li>
+                                    <li>* Does not include cargo insurance.</li>
+                                    <li>* Rate does not include customs clearance, taxes, handling, storage, custody, or any other concept not stipulated in this quotation.</li>
+                                    <li>* Payment terms: 15 days from invoice presentation.</li>
+                                    <li>* These charges are subject to VAT less withholding tax.</li>
+                                    <li>* Includes active monitoring with personalized attention 24/7/365.</li>
+                                    <li>* Quotation is based on current route conditions; any new change or obstacle must be reconsidered.</li>
+                                    <li>* Per the ninth clause of the bill of lading, goods and containers travel at the client's account and risk. Insurance and deductibles during transport and handling are the client's responsibility. Kuuch Logistics/Incargo.Mx México is not liable for theft or damage.</li>
+                                    <li>* Under no circumstances can we absorb discounts or expenses caused by delivery delays due to force majeure, unexpected breakdowns, strikes, protests or any other unforeseen event.</li>
+                                    <li>* Transport personnel are prohibited from opening doors or breaking container locks; this is entirely the warehouse's and/or client's responsibility. We disclaim any liability for missing goods, as we deliver with intact locks/seals.</li>
+                                </ul>
+                            </div>
+                        </t>
+
+                        <!-- PIE DE PÁGINA -->
+                        <div class="incargo-footer-container">
+                            <t t-if="doc.user_id">
+                                <div style="text-align:center; padding: 6px 0; font-size:10px; color:#333; line-height:1.6;">
+                                    <strong t-esc="doc.user_id.name"/>
+                                    <br/>
+                                    <span t-esc="doc.user_id.partner_id.phone or ''"/>
+                                    <br/>
+                                    <span t-esc="doc.user_id.email or ''"/>
+                                    <br/>
+                                    <span t-esc="doc.user_id.partner_id.function or ''"/>
+                                </div>
+                            </t>
+                            <div style="width:100%; line-height:0; margin:0; padding:0;">
+                                <img t-att-src="'/custom_freight_print/static/src/img/Pie_pagina_incargo.png'" class="incargo-footer-img"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

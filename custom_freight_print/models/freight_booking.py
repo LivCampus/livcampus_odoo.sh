@@ -18,5 +18,22 @@ class FreightBooking(models.Model):
     ('prepaid', 'Prepaid')
 ], string="Freight Payable")
 
+    add_total = fields.Boolean(string='Agregar total', default=True, help='Si está activo, se incluirá el total en la cotización (Freight Quotation).')
+    
+    quote_validity_date = fields.Date(string='Vigencia de la Cotización')
+
+
     def action_button_printreport_freight(self):
         return self.env.ref('custom_freight_print.action_report_freight_booking').report_action(self)
+    
+    def action_button_print_quotation(self):
+        return self.env.ref('custom_freight_print.action_report_freight_quotation').report_action(self)
+    
+    
+    def action_convert_shipment(self):
+       result = super(FreightBooking, self).action_convert_shipment()
+       for booking in self:
+           if booking.etd_date and booking.freight_operation_id:
+               if 'etd_date' in booking.freight_operation_id._fields:
+                   booking.freight_operation_id.write({'etd_date': booking.etd_date})
+       return result

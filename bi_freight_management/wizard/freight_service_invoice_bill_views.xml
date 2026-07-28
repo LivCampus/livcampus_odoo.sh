@@ -23,7 +23,8 @@
                     </notebook>
                 </sheet>
                 <footer>
-                    <button name="action_customer_invoice_bill" string="Customer Invoice" class="oe_highlight" type="object"/>
+                    <button name="action_customer_invoice_bill" string="Customer Invoice" class="oe_highlight" type="object" invisible="wizard_type == 'vendor_bill'"/>
+                    <button name="action_customer_invoice_bill" string="Vendor Bill" class="oe_highlight" type="object" invisible="wizard_type != 'vendor_bill'"/>
                     <button special="cancel" data-hotkey="z" string="Cancel" />
                 </footer>
             </form>

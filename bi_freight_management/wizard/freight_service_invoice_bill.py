@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Part of BrowseInfo. See LICENSE file for full copyright and licensing details.
 
-from odoo import fields, models, _
+from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
 
@@ -16,6 +16,31 @@ class FreightServiceInvoiceBill(models.TransientModel):
     partner_id = fields.Many2one('res.partner', required=True)
     freight_service_ids = fields.Many2many(
         'freight.service', string='Services')
+    freight_operation_id = fields.Many2one(
+        'freight.operation', string='Shipping',
+        compute='_compute_freight_operation_id', store=True)
+
+    @api.depends('freight_service_ids')
+    def _compute_freight_operation_id(self):
+        for wizard in self:
+            wizard.freight_operation_id = wizard.freight_service_ids and \
+                wizard.freight_service_ids[0].freight_operation_id.id or False
+
+    @api.onchange('partner_type', 'freight_service_ids')
+    def _onchange_partner_type_partner_id(self):
+        """Autocompleta el proveedor/cliente jalándolo del Shipping (Shipper, Consignee o Agent)."""
+        for wizard in self:
+            operation = wizard.freight_operation_id
+            if not operation and wizard.freight_service_ids:
+                operation = wizard.freight_service_ids[0].freight_operation_id
+            if operation and wizard.partner_type:
+                partner = {
+                    'shipper': operation.shipper_id,
+                    'consignee': operation.consignee_id,
+                    'agent': operation.agent_id,
+                }.get(wizard.partner_type)
+                if partner:
+                    wizard.partner_id = partner.id
 
     def _prepare_invoice_line(self, line): 
         return {
