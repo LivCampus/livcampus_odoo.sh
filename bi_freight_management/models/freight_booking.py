@@ -79,23 +79,29 @@ class FreightBooking(models.Model):
             amount_tax = 0.0
             for line in booking.booking_line_ids:
                 line_currency = line.currency_id or target_currency
-                converted_subtotal = line_currency._convert(
+                # line.price_subtotal already includes tax (it's the line's final Amount)
+                converted_total = line_currency._convert(
                     line.price_subtotal or 0.0, target_currency, company, conv_date)
-                amount_untaxed += converted_subtotal
                 if not line.tax_ids:
+                    amount_untaxed += converted_total
                     continue
+                converted_price_unit = line_currency._convert(
+                    line.price_unit or 0.0, target_currency, company, conv_date)
                 taxes = line.tax_ids
                 try:
                     tax_result = taxes.compute_all(
-                        converted_subtotal,
+                        converted_price_unit,
                         currency=target_currency,
-                        quantity=1.0,
+                        quantity=line.quantity,
                         product=line.product_id,
                         partner=booking.shipper_id or booking.consignee_id,
                     )
-                    amount_tax += (tax_result.get('total_included', 0.0) - tax_result.get('total_excluded', 0.0))
+                    line_untaxed = tax_result.get('total_excluded', converted_total)
+                    line_tax = tax_result.get('total_included', converted_total) - line_untaxed
+                    amount_untaxed += line_untaxed
+                    amount_tax += line_tax
                 except Exception:
-                    amount_tax += 0.0
+                    amount_untaxed += converted_total
             booking.amount_untaxed = amount_untaxed
             booking.amount_tax = amount_tax
             booking.amount_total = amount_untaxed + amount_tax
