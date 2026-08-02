@@ -97,20 +97,22 @@ class FreightOperation(models.Model):
     freight_tracking_ids = fields.One2many(
         'freight.tracking', 'freight_operation_id', string='Freight Tracking')
     expected_receivable = fields.Float(
-        string='Expected Receivable', compute='_compute_expected_receivable')
+        string='Expected Receivable', compute='_compute_expected_receivable', store=True)
     expected_payable = fields.Float(
-        string='Expected Payable', compute='_compute_expected_payable')
+        string='Expected Payable', compute='_compute_expected_payable', store=True)
     expected_margin = fields.Float(
-        string='Expected Margin', compute='_compute_expected_margin')
+        string='Expected Margin', compute='_compute_expected_margin', store=True)
     actual_receivable = fields.Float(
-        string='Actual Receivable', compute="_compute_actual_receivable")
+        string='Actual Receivable', compute="_compute_actual_receivable", store=True)
     actual_margin = fields.Float(
-        string='Actual Margin', compute='_compute_actual_margin')
+        string='Actual Margin', compute='_compute_actual_margin', store=True)
     actual_payable = fields.Float(
-        string='Actual Payable', compute='_compute_actual_payable')
+        string='Actual Payable', compute='_compute_actual_payable', store=True)
     receivable_due = fields.Float(string='Receivable Due', readonly=True)
     payable_due = fields.Float(string='Payable Due', readonly=True)
     is_booking = fields.Boolean(string='Booking', readonly=True)
+    invoice_date = fields.Date(
+        string='Invoice Date', compute='_compute_invoice_date', store=True)
     invoice_count = fields.Integer(
         string='Invoice Count', compute='_compute_invoice_count')
     vendor_bill_count = fields.Integer(
@@ -263,6 +265,15 @@ class FreightOperation(models.Model):
         for record in self:
             record.actual_margin = record.actual_receivable - record.actual_payable
 
+    @api.depends('freight_service_ids.move_line_ids.move_id.invoice_date',
+                 'freight_service_ids.move_line_ids.move_id.move_type')
+    def _compute_invoice_date(self):
+        for record in self:
+            invoice_ids = self.env['account.move.line'].search(
+                [('service_id', 'in', record.freight_service_ids.ids)]).filtered(
+                lambda line: line.move_id.move_type == 'out_invoice').mapped('move_id')
+            record.invoice_date = max(invoice_ids.mapped('invoice_date')) if invoice_ids else False
+
     @api.model_create_multi
     def create(self, vals):
         for value in vals:
@@ -303,6 +314,35 @@ class FreightOperation(models.Model):
                  'discharge_port_id': rec.discharge_port_id.id or False, 'shipping_line_id': rec.shipping_line_id.id or False,
                  'voyage_no': rec.voyage_no, 'destination_id': rec.destination_id.id or False,
                  'vessel_id': rec.vessel_id.id or False, 'obl': rec.obl})
+            tracking_names = [
+                    'ORIGEN - FECHA DE ENVIO DE S.I.',
+                    'ORIGEN - FECHA DE SOLICITUD DE RESERVACION',
+                    'ORIGEN - CONFIRMACION DE BOOKING',
+                    'ORIGEN - CIERRE DOCUMENTOS',
+                    'ORIGEN - CIERRE DESPACHO',
+                    'ORIGEN - RECOLECCION',
+                    'ORIGEN - DOCUMENTACION',
+                    'ORIGEN - DESPACHO',
+                    'ORIGEN - ETD',
+                    'ORIGEN - TRANSMISION AMS',
+                    'ORIGEN - ATD',
+                    'ORIGEN - ENVIO NOTIFICACION DE ZARPE // PREALERT',
+                    'DESTINO - ENVIO NOTIFICACION DE ARRIBO',
+                    'DESTINO - ETA',
+                    'DESTINO - ATA',
+                    'DESTINO - REVALIDACION',
+                    'DESTINO - FECHA PREVIO',
+                    'DESTINO - FECHA DESPACHO',
+                    'DESTINO - ENTREGA CLIENTE',
+                    'DESTINO - ENTREGA VACIO',
+                ]
+            for tracking_name in tracking_names:
+                self.env['freight.tracking'].create({
+                    'name': tracking_name,
+                    'location': '.',
+                    'description': '.',
+                    'freight_operation_id': rec.id,
+                })
             if rec.freight_order_package_ids and rec.freight_route_ids:
                 for route in rec.freight_route_ids:
                     for package in rec.freight_order_package_ids:

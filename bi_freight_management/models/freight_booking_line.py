@@ -20,10 +20,20 @@ class FreightBookingLine(models.Model):
     price_subtotal = fields.Monetary(string='Amount', currency_field='currency_id', compute='_compute_price_subtotal', store=True)
     currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
 
-    @api.depends('quantity', 'price_unit')
+    @api.depends('quantity', 'price_unit', 'tax_ids')
     def _compute_price_subtotal(self):
         for line in self:
-            line.price_subtotal = line.quantity * line.price_unit
+            if line.tax_ids:
+                taxes = line.tax_ids.compute_all(
+                    line.price_unit,
+                    currency=line.currency_id or line.env.company.currency_id,
+                    quantity=line.quantity,
+                    product=line.product_id,
+                    partner=line.booking_id.shipper_id or line.booking_id.consignee_id,
+                )
+                line.price_subtotal = taxes['total_included']
+            else:
+                line.price_subtotal = line.quantity * line.price_unit
 
     @api.onchange('product_id')
     def _onchange_product_id(self):

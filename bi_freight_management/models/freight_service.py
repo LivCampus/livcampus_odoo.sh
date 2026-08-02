@@ -22,6 +22,8 @@ class FreightService(models.Model):
         'freight.route', string='Freight Order Package')
     freight_operation_id = fields.Many2one(
         'freight.operation', string='Freight Operation')
+    move_line_ids = fields.One2many(
+        'account.move.line', 'service_id', string='Invoice Lines')
 
     @api.model_create_multi
     def create(self, vals_list):
