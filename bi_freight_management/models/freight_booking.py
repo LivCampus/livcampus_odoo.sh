@@ -68,19 +68,27 @@ class FreightBooking(models.Model):
     amount_tax = fields.Monetary(string='Taxes', currency_field='currency_id', compute='_compute_amounts', store=True)
     amount_total = fields.Monetary(string='Total', currency_field='currency_id', compute='_compute_amounts', store=True)
 
-    @api.depends('booking_line_ids', 'booking_line_ids.price_subtotal', 'booking_line_ids.tax_ids')
+    @api.depends('booking_line_ids', 'booking_line_ids.price_subtotal', 'booking_line_ids.tax_ids',
+                 'booking_line_ids.currency_id', 'currency_id')
     def _compute_amounts(self):
         for booking in self:
-            amount_untaxed = sum((line.price_subtotal or 0.0) for line in booking.booking_line_ids)
+            company = booking.env.company
+            target_currency = booking.currency_id or company.currency_id
+            conv_date = fields.Date.context_today(booking)
+            amount_untaxed = 0.0
             amount_tax = 0.0
             for line in booking.booking_line_ids:
+                line_currency = line.currency_id or target_currency
+                converted_subtotal = line_currency._convert(
+                    line.price_subtotal or 0.0, target_currency, company, conv_date)
+                amount_untaxed += converted_subtotal
                 if not line.tax_ids:
                     continue
                 taxes = line.tax_ids
                 try:
                     tax_result = taxes.compute_all(
-                        line.price_subtotal or 0.0,
-                        currency=booking.currency_id or booking.env.company.currency_id,
+                        converted_subtotal,
+                        currency=target_currency,
                         quantity=1.0,
                         product=line.product_id,
                         partner=booking.shipper_id or booking.consignee_id,
