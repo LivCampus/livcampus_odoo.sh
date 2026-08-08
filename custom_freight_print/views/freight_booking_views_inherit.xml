@@ -18,6 +18,12 @@
                 <field name="intructions_hbl" invisible="transport != 'ocean'"/>
             </xpath>
 
+            <xpath expr="//field[@name='booking_line_ids']//list/field[@name='product_id']" position="after">
+                <field name="transport" column_invisible="1"/>
+                <field name="origin_port_id"/>
+                <field name="destination_port_id"/>
+            </xpath>
+
             <xpath expr="//field[@name='booking_line_ids']//list/field[@name='price_unit']" position="after">
                 <field name="currency_id"/>
             </xpath>

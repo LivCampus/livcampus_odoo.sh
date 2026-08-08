@@ -10,4 +10,23 @@
             </xpath>
         </field>
     </record>
+
+    <record id="freight_operation_view_search_inherit" model="ir.ui.view">
+        <field name="name">freight.operation.search.inherit</field>
+        <field name="model">freight.operation</field>
+        <field name="inherit_id" ref="bi_freight_management.freight_operation_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='container_number']" position="before">
+                <field name="quick_search" string="Búsqueda General"/>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="obl" string="OBL"/>
+                <field name="mawb_no" string="MAWB No"/>
+            </xpath>
+            <xpath expr="//filter[@name='filter_container_number']" position="after">
+                <filter string="OBL" name="filter_obl" domain="[('obl', '!=', False)]"/>
+                <filter string="MAWB No" name="filter_mawb_no" domain="[('mawb_no', '!=', False)]"/>
+            </xpath>
+        </field>
+    </record>
 </odoo>

@@ -341,15 +341,25 @@
                                 </thead>
                                 <tbody>
                                     <t t-foreach="doc.booking_line_ids" t-as="line">
-                                        <tr class="tr-product">
+                                        <tr t-if="line.display_type == 'line_section'" class="tr-section">
+                                            <td colspan="8" style="text-align:left; font-weight:bold; background:#f2f2f2; padding-left:6px;">
+                                                <span t-field="line.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr t-elif="line.display_type == 'line_note'" class="tr-note">
+                                            <td colspan="8" style="text-align:left; font-style:italic; color:#666; padding-left:12px;">
+                                                <span t-field="line.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr t-else="" class="tr-product">
                                             <td class="td-name">
                                                 <span t-esc="line.product_id.name"/>
                                             </td>
                                             <td style="text-align:center;">
-                                                <span t-if="doc.gateway_id" t-field="doc.gateway_id.name"/>
+                                                <span t-if="line.origin_port_id" t-field="line.origin_port_id.name"/>
                                             </td>
                                             <td style="text-align:center;">
-                                                <span t-if="doc.destination_id" t-field="doc.destination_id.name"/>
+                                                <span t-if="line.destination_port_id" t-field="line.destination_port_id.name"/>
                                             </td>
                                             <td style="text-align:center;">
                                                 <span t-field="line.quantity"/>
@@ -419,15 +429,25 @@
                                 </thead>
                                 <tbody>
                                     <t t-foreach="doc.booking_line_ids" t-as="line">
-                                        <tr class="tr-product">
+                                        <tr t-if="line.display_type == 'line_section'" class="tr-section">
+                                            <td colspan="9" style="text-align:left; font-weight:bold; background:#f2f2f2; padding-left:6px;">
+                                                <span t-field="line.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr t-elif="line.display_type == 'line_note'" class="tr-note">
+                                            <td colspan="9" style="text-align:left; font-style:italic; color:#666; padding-left:12px;">
+                                                <span t-field="line.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr t-else="" class="tr-product">
                                             <td class="td-name">
                                                 <span t-esc="line.product_id.name"/>
                                             </td>
                                             <td style="text-align:center;">
-                                                <span t-if="doc.loading_port_id" t-field="doc.loading_port_id.name"/>
+                                                <span t-if="line.origin_port_id" t-field="line.origin_port_id.name"/>
                                             </td>
                                             <td style="text-align:center;">
-                                                <span t-if="doc.discharge_port_id" t-field="doc.discharge_port_id.name"/>
+                                                <span t-if="line.destination_port_id" t-field="line.destination_port_id.name"/>
                                             </td>
                                             <td style="text-align:center;">
                                                 <span t-field="line.quantity"/>
@@ -496,15 +516,25 @@
                                 </thead>
                                 <tbody>
                                     <t t-foreach="doc.booking_line_ids" t-as="line">
-                                        <tr class="tr-product">
+                                        <tr t-if="line.display_type == 'line_section'" class="tr-section">
+                                            <td colspan="8" style="text-align:left; font-weight:bold; background:#f2f2f2; padding-left:6px;">
+                                                <span t-field="line.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr t-elif="line.display_type == 'line_note'" class="tr-note">
+                                            <td colspan="8" style="text-align:left; font-style:italic; color:#666; padding-left:12px;">
+                                                <span t-field="line.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr t-else="" class="tr-product">
                                             <td class="td-name">
                                                 <span t-esc="line.product_id.name"/>
                                             </td>
                                             <td style="text-align:center;">
-                                                <span t-if="doc.from_port_id" t-field="doc.from_port_id.name"/>
+                                                <span t-if="line.origin_port_id" t-field="line.origin_port_id.name"/>
                                             </td>
                                             <td style="text-align:center;">
-                                                <span t-if="doc.to_port_id" t-field="doc.to_port_id.name"/>
+                                                <span t-if="line.destination_port_id" t-field="line.destination_port_id.name"/>
                                             </td>
                                             <td style="text-align:center;">
                                                 <span t-field="line.quantity"/>

@@ -123,9 +123,17 @@
                     </group>
                     <notebook>
                         <page string="Ventas">
-                            <field name="booking_line_ids">
+                            <field name="booking_line_ids" widget="section_and_note_one2many">
                                 <list editable="bottom">
-                                    <field name="product_id"/>
+                                    <control>
+                                        <create string="Agregar un producto"/>
+                                        <create string="Agregar una sección" context="{'default_display_type': 'line_section'}"/>
+                                        <create string="Agregar una nota" context="{'default_display_type': 'line_note'}"/>
+                                    </control>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="display_type" column_invisible="1"/>
+                                    <field name="product_id" required="not display_type"/>
+                                    <field name="name" widget="section_and_note_text" optional="show"/>
                                     <field name="free_days"/>
                                     <field name="transit_time"/>
                                     <field name="quantity"/>
