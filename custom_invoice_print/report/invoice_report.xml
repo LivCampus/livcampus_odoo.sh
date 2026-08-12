@@ -2,7 +2,7 @@
     <!-- Heredamos DIRECTO el documento de factura (nivel correcto, no account.report_invoice) -->
     <template id="report_invoice_document_custom" inherit_id="account.report_invoice_document">
         <xpath expr="//t[@t-call='web.external_layout']" position="replace">
-            <t t-if="o.company_id.name == 'ZAPATERIA URTADO ÑERI'">
+            <t t-if="o.company_id.name == 'KUUCH LOGISTICS MÉXICO'">
                 <!-- ===== TU FORMATO CUSTOM ===== -->
                 <t t-set="doc" t-value="o"/>
                 <t t-call="web.internal_layout">
