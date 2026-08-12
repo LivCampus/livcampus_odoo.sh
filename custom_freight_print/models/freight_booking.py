@@ -4,8 +4,11 @@ class FreightBooking(models.Model):
     _inherit = 'freight.booking'
 
     customer_id = fields.Many2one(
-        'res.partner', string='Customer',
+        'res.partner', string='Customer', required=True,
         help='Customer of the quotation. Used to print the quotation PDF (company, attention and language).')
+
+    shipper_id = fields.Many2one(
+        'res.partner', string='Shipper', required=False)
 
     commodity = fields.Char(string='Commodity')
 
@@ -47,6 +50,23 @@ class FreightBookingLine(models.Model):
 
     booking_currency_id = fields.Many2one(
         'res.currency', related='booking_id.currency_id', string='Booking Currency')
+
+    transport = fields.Selection(
+        related='booking_id.transport', string='Transporte', store=False, readonly=True)
+
+    origin_port_id = fields.Many2one(
+        'freight.port', string='Origen',
+        domain="[('air', '=', True)] if transport == 'air' else "
+               "([('ocean', '=', True)] if transport == 'ocean' else "
+               "([('land', '=', True)] if transport == 'land' else []))",
+        help='Puerto de origen. Solo se muestran los puertos disponibles según el tipo de transporte del booking.')
+
+    destination_port_id = fields.Many2one(
+        'freight.port', string='Destino',
+        domain="[('air', '=', True)] if transport == 'air' else "
+               "([('ocean', '=', True)] if transport == 'ocean' else "
+               "([('land', '=', True)] if transport == 'land' else []))",
+        help='Puerto de destino. Solo se muestran los puertos disponibles según el tipo de transporte del booking.')
 
     price_unit_converted = fields.Monetary(
         string='Unit Price (Converted)', currency_field='booking_currency_id',
