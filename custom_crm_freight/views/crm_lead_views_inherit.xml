@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="crm_lead_view_form_freight_custom" model="ir.ui.view">
+        <field name="name">crm.lead.form.freight.custom</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor"/>
+        <field name="arch" type="xml">
+
+
+            <xpath expr="//button[@name='action_sale_quotations_new']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//button[@name='action_sale_quotations_new']" position="after">
+                <button string="New Booking" name="action_crm_to_freight_new" type="object" class="oe_highlight" data-hotkey="q" title="Crear operación de carga flete" invisible="type == 'lead' or probability == 0 and not active"/>
+            </xpath>
+
+            <xpath expr="//button[@name='action_view_sale_quotation']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//button[@name='action_view_sale_quotation']" position="after">
+                <button class="oe_stat_button" type="object" name="action_view_freight_bookings" icon="fa-pencil-square-o" invisible="type == 'lead'">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">Booking</span>
+                    </div>
+                </button>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>
