@@ -2,14 +2,22 @@
 # Part of BrowseInfo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models
+from odoo.exceptions import ValidationError
 
 
 class FreightBookingLine(models.Model):
     _name = 'freight.booking.line'
     _description = 'Freight Booking Line'
+    _order = 'sequence, id'
 
+    sequence = fields.Integer(string='Sequence', default=10)
     booking_id = fields.Many2one('freight.booking', string='Booking', required=True, ondelete='cascade')
-    product_id = fields.Many2one('product.product', string='Product', required=True, domain=[('sale_ok', '=', True)])
+    display_type = fields.Selection([
+        ('line_section', 'Sección'),
+        ('line_note', 'Nota'),
+    ], default=False, help='Las secciones y notas no representan un producto, solo texto informativo dentro de la lista.')
+    name = fields.Text(string='Descripción', help='Texto de la sección o la nota.')
+    product_id = fields.Many2one('product.product', string='Product', domain=[('sale_ok', '=', True)])
     product_tmpl_id = fields.Many2one('product.template', related='product_id.product_tmpl_id', store=True)
     free_days = fields.Integer(string='Free Days')
     transit_time = fields.Integer(string='Transit Time')
@@ -20,10 +28,31 @@ class FreightBookingLine(models.Model):
     price_subtotal = fields.Monetary(string='Amount', currency_field='currency_id', compute='_compute_price_subtotal', store=True)
     currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
 
-    @api.depends('quantity', 'price_unit')
+    @api.depends('quantity', 'price_unit', 'tax_ids', 'display_type')
     def _compute_price_subtotal(self):
         for line in self:
-            line.price_subtotal = line.quantity * line.price_unit
+            if line.display_type:
+                line.price_subtotal = 0.0
+                continue
+            if line.tax_ids:
+                taxes = line.tax_ids.compute_all(
+                    line.price_unit,
+                    currency=line.currency_id or line.env.company.currency_id,
+                    quantity=line.quantity,
+                    product=line.product_id,
+                    partner=line.booking_id.shipper_id or line.booking_id.consignee_id,
+                )
+                line.price_subtotal = taxes['total_included']
+            else:
+                line.price_subtotal = line.quantity * line.price_unit
+
+    @api.constrains('product_id', 'display_type')
+    def _check_display_type(self):
+        for line in self:
+            if line.display_type and line.product_id:
+                raise ValidationError("Una sección o nota no puede tener un producto asociado.")
+            if not line.display_type and not line.product_id:
+                raise ValidationError("Debe seleccionar un producto en la línea.")
 
     @api.onchange('product_id')
     def _onchange_product_id(self):

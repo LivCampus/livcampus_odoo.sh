@@ -283,6 +283,7 @@
                         <page string="Tracking" name="tracking">
                             <field name="freight_tracking_ids">
                                 <list editable="bottom" string="Freight Services">
+                                    <field name="name"/>
                                     <field name="location"/>
                                     <field name="description"/>
                                     <field name="date"/>

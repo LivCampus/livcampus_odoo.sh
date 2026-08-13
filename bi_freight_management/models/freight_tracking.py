@@ -8,6 +8,7 @@ class FreightTracking(models.Model):
     _name = 'freight.tracking'
     _description = 'Freight Tracking'
 
+    name = fields.Char(string='Tracking Name')
     location = fields.Char(string='Location', required=True)
     description = fields.Char(string='Description', required=True)
     date = fields.Date(string='Date')

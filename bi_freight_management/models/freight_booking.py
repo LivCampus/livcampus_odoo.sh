@@ -68,26 +68,40 @@ class FreightBooking(models.Model):
     amount_tax = fields.Monetary(string='Taxes', currency_field='currency_id', compute='_compute_amounts', store=True)
     amount_total = fields.Monetary(string='Total', currency_field='currency_id', compute='_compute_amounts', store=True)
 
-    @api.depends('booking_line_ids', 'booking_line_ids.price_subtotal', 'booking_line_ids.tax_ids')
+    @api.depends('booking_line_ids', 'booking_line_ids.price_subtotal', 'booking_line_ids.tax_ids',
+                 'booking_line_ids.currency_id', 'currency_id')
     def _compute_amounts(self):
         for booking in self:
-            amount_untaxed = sum((line.price_subtotal or 0.0) for line in booking.booking_line_ids)
+            company = booking.env.company
+            target_currency = booking.currency_id or company.currency_id
+            conv_date = fields.Date.context_today(booking)
+            amount_untaxed = 0.0
             amount_tax = 0.0
             for line in booking.booking_line_ids:
+                line_currency = line.currency_id or target_currency
+                # line.price_subtotal already includes tax (it's the line's final Amount)
+                converted_total = line_currency._convert(
+                    line.price_subtotal or 0.0, target_currency, company, conv_date)
                 if not line.tax_ids:
+                    amount_untaxed += converted_total
                     continue
+                converted_price_unit = line_currency._convert(
+                    line.price_unit or 0.0, target_currency, company, conv_date)
                 taxes = line.tax_ids
                 try:
                     tax_result = taxes.compute_all(
-                        line.price_subtotal or 0.0,
-                        currency=booking.currency_id or booking.env.company.currency_id,
-                        quantity=1.0,
+                        converted_price_unit,
+                        currency=target_currency,
+                        quantity=line.quantity,
                         product=line.product_id,
                         partner=booking.shipper_id or booking.consignee_id,
                     )
-                    amount_tax += (tax_result.get('total_included', 0.0) - tax_result.get('total_excluded', 0.0))
+                    line_untaxed = tax_result.get('total_excluded', converted_total)
+                    line_tax = tax_result.get('total_included', converted_total) - line_untaxed
+                    amount_untaxed += line_untaxed
+                    amount_tax += line_tax
                 except Exception:
-                    amount_tax += 0.0
+                    amount_untaxed += converted_total
             booking.amount_untaxed = amount_untaxed
             booking.amount_tax = amount_tax
             booking.amount_total = amount_untaxed + amount_tax
