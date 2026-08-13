@@ -1,0 +1,403 @@
+.arrival-container {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: 'Helvetica', 'Arial', sans-serif;
+  font-size: 11px;
+  color: #000;
+  line-height: 1.2;
+}
+
+.arrival-container *,
+.arrival-container *::before,
+.arrival-container *::after {
+  box-sizing: border-box;
+}
+
+.arrival-container table {
+  page-break-inside: avoid;
+}
+
+.arrival-container tr {
+  page-break-inside: avoid;
+}
+
+.arrival-container img {
+  max-width: 100%;
+}
+
+.arrival-container p {
+  margin: 0;
+  padding: 0;
+}
+
+.arrival-container h1,
+.arrival-container h2,
+.arrival-container h3,
+.arrival-container h4 {
+  margin: 0;
+  padding: 0;
+}
+
+/* LOGO */
+
+.arrival-logo-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+.arrival-logo-cell {
+  border: none;
+  padding: 0;
+}
+
+.arrival-logo-box {
+  width: 100%;
+}
+
+.arrival-logo-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* TÍTULO PRINCIPAL */
+
+.arrival-main-title-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 2px solid #000;
+  border-bottom: 2px solid #000;
+  margin-bottom: 15px;
+  margin-top: 10px;
+}
+
+.arrival-main-title-table td {
+  border: none !important;
+  padding: 10px 0 !important;
+  vertical-align: middle;
+}
+
+.title-cell-left {
+  width: 70%;
+  text-align: left;
+  padding-left: 8px !important;
+}
+
+.title-cell-right {
+  width: 30%;
+  text-align: right;
+  padding-right: 8px !important;
+}
+
+.arrival-main-title {
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1.4;
+}
+
+.arrival-page-counter {
+  font-size: 11px;
+  font-weight: bold;
+}
+
+/* TABLAS GENERALES */
+
+.arrival-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: -1px;
+  table-layout: fixed;
+}
+
+.arrival-table td {
+  border: 1px solid #000;
+  padding: 4px 6px;
+  vertical-align: top;
+}
+
+/* CAMPOS */
+
+.field-label {
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.field-value {
+  font-size: 11px;
+  white-space: pre-line;
+}
+
+/* BANNERS DE SECCIÓN */
+
+.section-banner-td {
+  background-color: #f2f2f2;
+  font-weight: bold;
+  font-size: 11px;
+  padding: 2px 6px !important;
+  border-top: 2px solid #000 !important;
+  border-bottom: 2px solid #000 !important;
+}
+
+/* DIRECCIÓN PRINCIPAL */
+
+.arrival-main-address {
+  width: 55%;
+  height: 75px;
+}
+
+.arrival-main-address .field-value {
+  font-weight: bold;
+}
+
+/* INFORMACIÓN DE SHIPMENT */
+
+.shipment-info-container {
+  width: 45%;
+  padding: 0 !important;
+}
+
+.shipment-info-table {
+  width: 100%;
+  border: none !important;
+  border-collapse: collapse;
+  margin: 0;
+}
+
+.shipment-info-table td {
+  border: none;
+}
+
+.shipment-label {
+  border: none !important;
+  border-bottom: 1px solid #000 !important;
+  border-left: 1px solid #000 !important;
+  width: 45%;
+  text-align: right;
+  font-weight: bold;
+}
+
+.shipment-value {
+  border: none !important;
+  border-bottom: 1px solid #000 !important;
+  font-weight: bold;
+}
+
+.shipment-label-last {
+  border: none !important;
+  border-left: 1px solid #000 !important;
+  text-align: right;
+  font-weight: bold;
+}
+
+.shipment-value-last {
+  border: none !important;
+  font-weight: bold;
+}
+
+.shipment-name-value {
+  color: blue;
+  font-weight: bold;
+}
+
+/* SHIPPER / CONSIGNEE */
+
+.partner-table {
+  margin-top: 15px;
+}
+
+.shipper-column,
+.consignee-column {
+  width: 50%;
+}
+
+.shipper-column {
+  height: 70px;
+}
+
+/* RELEASE / COMMODITY / CARRIER / REFERENCES */
+
+.release-column,
+.commodity-column,
+.carrier-column,
+.reference-column {
+  width: 50%;
+}
+
+.house-bl-column {
+  width: 25%;
+}
+
+/* GOODS DESCRIPTION */
+
+.goods-description-cell {
+  height: 30px;
+}
+
+.goods-description-value {
+  font-weight: bold;
+}
+
+/* MÉTRICAS */
+
+.metric-packages {
+  width: 28%;
+}
+
+.metric-column {
+  width: 18%;
+}
+
+.metric-value {
+  font-weight: bold;
+}
+
+/* ORIGEN / DESTINO / FECHAS */
+
+.goods-collected-column {
+  width: 35%;
+}
+
+.etd-column {
+  width: 15%;
+}
+
+.goods-delivered-column {
+  width: 35%;
+}
+
+.eta-column {
+  width: 15%;
+}
+
+/* ROUTING */
+
+.routing-table {
+  text-align: center;
+}
+
+.routing-header {
+  font-weight: bold;
+  background-color: #fafafa;
+  font-size: 11px;
+}
+
+.routing-vessel {
+  width: 27%;
+  text-align: left;
+}
+
+.routing-carrier {
+  width: 25%;
+  text-align: left;
+}
+
+.routing-mode {
+  width: 8%;
+  text-align: center;
+}
+
+.routing-load,
+.routing-discharge {
+  width: 10%;
+  text-align: center;
+}
+
+.routing-etd,
+.routing-eta,
+.routing-atd,
+.routing-ata {
+  width: 5%;
+  text-align: center;
+}
+
+/* CONTAINERS */
+
+.container-table {
+  margin-top: 15px;
+}
+
+.container-header {
+  font-weight: bold;
+  background-color: #f2f2f2;
+}
+
+.container-header td {
+  font-size: 11px;
+}
+
+.container-column {
+  width: 25%;
+  text-align: left;
+}
+
+.seal-column {
+  width: 15%;
+  text-align: left;
+}
+
+.type-column {
+  width: 15%;
+  text-align: center;
+}
+
+.weight-column {
+  width: 15%;
+  text-align: center;
+}
+
+.volume-column {
+  width: 15%;
+  text-align: center;
+}
+
+.packs-column {
+  width: 15%;
+  text-align: center;
+}
+
+.container-empty-cell {
+  padding: 10px !important;
+}
+
+/* FOOTER */
+
+.arrival-footer {
+  page-break-inside: avoid;
+  break-inside: avoid;
+  margin-top: 15px;
+}
+
+.arrival-footer-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.arrival-footer-cell {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.arrival-footer-box {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.arrival-footer-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+/* UTILIDADES REALMENTE USADAS */
+
+.text-center {
+  text-align: center !important;
+}

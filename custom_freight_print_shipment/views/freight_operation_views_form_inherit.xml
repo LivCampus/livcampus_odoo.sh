@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_freight_operation_house_form_inherit" model="ir.ui.view">
+        <field name="name">freight.operation.house.form.inherit</field>
+        <field name="model">freight.operation</field>
+        <field name="inherit_id" ref="bi_freight_management.freight_operation_house_view_form"/>
+        <field name="priority" eval="1"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//header" position="inside">
+                <button name="action_print_house_instruction" string="Imprimir" type="object" class="oe_highlight" icon="fa-print"/>
+            </xpath>
+
+            <xpath expr="//field[@name='freight_other_pc_id']" position="after">
+                <field name="release_type"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>
