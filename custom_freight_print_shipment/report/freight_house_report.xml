@@ -18,7 +18,6 @@
 
 
     <!-- REPORTE -->
-
     <record id="action_report_freight_house" model="ir.actions.report">
         <field name="name">SHIPMENT INSTRUCTION</field>
         <field name="model">freight.operation</field>
@@ -46,7 +45,6 @@
 
 
                         <!-- LOGO -->
-
                         <table class="arrival-logo-table">
                             <tr>
                                 <td class="arrival-logo-cell">
@@ -57,794 +55,747 @@
                             </tr>
                         </table>
 
-                        <!-- TITLE -->
 
+                        <!-- TITLE -->
                         <t t-if="doc.transport == 'ocean'">
 
                             <table class="arrival-main-title-table">
-
                                 <tr>
-
                                     <td class="title-cell-left">
                                         <h1 class="arrival-main-title">
                                             Sea Freight FCL Arrival Notice
                                         </h1>
                                     </td>
+                                </tr>
+                            </table>
 
-                                    <td class="title-cell-right">
-                                        <span class="arrival-page-counter">
-                                            Page 1 of 1
-                                        </span>
+                        </t>
+
+
+                        <!-- INFORMATION CUSTOMER -->
+                        <table class="arrival-table" style="width: 100%;">
+                            <tr>
+                                <td class="arrival-main-address" style="width: 65%; vertical-align: top; height: auto !important;">
+                                    <span class="field-value">
+                                        <t t-if="doc.report_partner_id">
+                                            <strong t-field="doc.report_partner_id.name"/>
+                                            <br/>
+                                            <t t-if="doc.report_partner_id.street or doc.report_partner_id.street2">
+                                                <span t-out="', '.join([part for part in [doc.report_partner_id.street, doc.report_partner_id.street2] if part])"/>
+                                                <br/>
+                                            </t>
+                                            <t t-if="doc.report_partner_id.city or doc.report_partner_id.state_id or doc.report_partner_id.zip or doc.report_partner_id.country_id">
+                                                <span t-out="', '.join([part for part in [doc.report_partner_id.city, doc.report_partner_id.state_id.name, doc.report_partner_id.zip, doc.report_partner_id.country_id.name] if part])"/>
+                                            </t>
+                                        </t>
+                                        <t t-else="">
+                                            <span>CUSTOMER NOT ASSIGNED</span>
+                                        </t>
+                                    </span>
+                                </td>
+
+
+                                <!-- SHIPMENT -->
+                                <td class="shipment-info-container">
+
+                                    <table class="shipment-info-table">
+
+                                        <tr>
+
+                                            <td class="shipment-label">
+                                                SHIPMENT
+                                            </td>
+
+                                            <td class="shipment-value">
+                                                <span t-field="doc.name" class="shipment-name-value" />
+                                            </td>
+
+                                        </tr>
+
+
+                                        <tr>
+
+                                            <td class="shipment-label">
+                                                CONSOL
+                                            </td>
+
+                                            <td class="shipment-value">
+                                                PENDIENTE DE INFORMACIÓN
+                                            </td>
+
+                                        </tr>
+
+
+                                        <tr>
+
+                                            <td class="shipment-label-last">
+                                                DATE
+                                            </td>
+
+                                            <td class="shipment-value-last">
+
+                                                <span t-field="doc.date_create_shipment" t-options="{'format': 'dd-MMM-yy'}" />
+
+                                            </td>
+
+                                        </tr>
+
+                                    </table>
+
+                                </td>
+
+                            </tr>
+
+                        </table>
+
+
+                        <!-- SHIPPER / CONSIGNEE -->
+                        <table class="arrival-table partner-table">
+
+                            <tr>
+
+                                <!-- SHIPPER -->
+                                <td class="shipper-column">
+
+                                    <div class="partner-box">
+
+                                        <strong class="partner-title">
+                                            SHIPPER:
+                                        </strong>
+
+                                        <br/>
+
+                                        <div t-if="doc.shipper_id" t-field="doc.shipper_id" t-options="{'widget': 'contact', 'fields': ['name', 'address'], 'no_marker': True}" />
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- CONSIGNEE -->
+                                <td class="consignee-column">
+
+                                    <div class="partner-box">
+
+                                        <strong class="partner-title">
+                                            CONSIGNEE:
+                                        </strong>
+
+                                        <br/>
+
+                                        <div t-if="doc.consignee_id" t-field="doc.consignee_id" t-options="{'widget': 'contact', 'fields': ['name', 'address'], 'no_marker': True}" />
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        </table>
+
+
+                        <!-- RELEASE TYPE / COMMODITY -->
+                        <table class="arrival-table">
+
+                            <tr>
+
+                                <td class="release-column">
+
+                                    <span class="field-label">
+                                        Release Type
+                                    </span>
+
+                                    <span class="field-value" t-field="doc.release_type" />
+
+                                </td>
+
+
+                                <td class="commodity-column">
+
+                                    <span class="field-label">
+                                        Commodity Type
+                                    </span>
+
+                                    <span class="field-value">
+                                        <t t-out="doc.report_commodity"/>
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td class="carrier-column">
+
+                                    <span class="field-label">
+                                        Carrier
+                                    </span>
+
+                                    <span class="field-value" t-field="doc.shipping_line_id.name" />
+
+                                </td>
+
+
+                                <td class="carrier-column">
+
+                                    <span class="field-label">
+                                        GOODS TO BE CLEARED BY
+                                    </span>
+
+                                    <span class="field-value" t-field="doc.agent_id.name" />
+
+                                </td>
+
+                            </tr>
+
+                        </table>
+
+
+                        <!-- REFERENCIAS / BILL OF LADING -->
+                        <table class="arrival-table">
+
+                            <tr>
+
+                                <td class="reference-column">
+
+                                    <span class="field-label">
+                                        Order Numbers / Reference
+                                    </span>
+
+                                    <span class="field-value"/>
+
+                                </td>
+
+
+                                <td class="carrier-column">
+
+                                    <span class="field-label">
+                                        OCEAN BILL OF LADING
+                                    </span>
+
+                                    <span class="field-value" t-field="doc.obl" />
+
+                                </td>
+
+
+                                <td class="house-bl-column">
+
+                                    <span class="field-label">
+                                        House Bill of Lading
+                                    </span>
+
+                                    <span class="field-value">
+                                        PENDIENTE DE INFORMACIÓN
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+                        </table>
+
+
+                        <!-- GOODS DESCRIPTION -->
+                        <table class="arrival-table">
+
+                            <tr>
+
+                                <td class="section-banner-td">
+                                    GOODS DESCRIPTION
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td class="goods-description-cell">
+
+                                    <span class="field-value goods-description-value" t-field="doc.note" />
+
+                                </td>
+
+                            </tr>
+
+                        </table>
+
+
+                        <!-- TABLE PACKAGES -->
+                        <table class="metrics-strip-table">
+
+                            <tr>
+
+                                <td class="metrics-strip-cell">
+
+                                    <t t-if="doc.report_package_ids">
+
+                                        <div class="metric-inline-block">
+
+                                            <span class="metric-strip-label">PACKAGES:</span>
+
+                                            <span class="metric-strip-value">
+
+                                                <span t-out="sum(doc.report_package_ids.mapped('quantity'))"/>
+
+                                                <span t-out="doc.report_package_ids.package_id.name if doc.report_package_ids.package_id else 'PKG'"/>
+
+                                            </span>
+
+                                        </div>
+
+                                        <div class="metric-inline-block">
+
+                                            <span class="metric-strip-label">WEIGHT:</span>
+
+                                            <span class="metric-strip-value">
+
+                                                <span t-out="sum(doc.report_package_ids.mapped('gross_weight'))"/>
+
+                                            </span>
+
+                                        </div>
+
+                                        <div class="metric-inline-block">
+
+                                            <span class="metric-strip-label">VOLUME:</span>
+
+                                            <span class="metric-strip-value">
+
+                                                <span t-out="sum(doc.report_package_ids.mapped('volume'))"/>
+
+                                            </span>
+
+                                        </div>
+
+                                        <div class="metric-inline-block">
+
+                                            <span class="metric-strip-label">CHARGEABLE:</span>
+
+                                            <span class="metric-strip-value">
+
+                                                <span t-out="sum(doc.report_package_ids.mapped('volume'))"/>
+
+                                            </span>
+
+                                        </div>
+                                        <div class="metric-inline-block-last">
+
+                                            <span class="metric-strip-label">EST DELIVERY:</span>
+
+                                            <span class="metric-strip-value">-</span>
+
+                                        </div>
+
+                                    </t>
+
+                                    <t t-else="">
+                                        <div class="metric-inline-block-last">
+
+                                            <span class="metric-strip-empty">No container information</span>
+
+                                        </div>
+
+                                    </t>
+
+                                </td>
+
+                            </tr>
+
+                        </table>
+
+
+                        <!-- ORIGEN / DESTINO / FECHAS -->
+                        <table class="arrival-table">
+
+                            <tr>
+
+                                <!-- GOODS COLLECTED FROM -->
+                                <td class="goods-collected-column">
+
+                                    <span class="field-label">
+                                        Goods Collected From
+                                    </span>
+
+                                    <span class="field-value" t-field="doc.loading_port_id.name" />
+
+                                </td>
+
+
+                                <!-- ETD -->
+                                <td class="etd-column">
+
+                                    <span class="field-label">
+                                        ETD
+                                    </span>
+
+                                    <span class="field-value">
+
+                                        <t t-if="doc.report_etd_date">
+
+                                            <span t-field="doc.report_etd_date" t-options="{'format': 'dd-MMM-yy'}" />
+
+                                        </t>
+
+                                        <t t-else="">-</t>
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- GOODS DELIVERED TO -->
+                                <td class="goods-delivered-column">
+
+                                    <span class="field-label">
+                                        Goods Delivered To
+                                    </span>
+
+                                    <span class="field-value" t-field="doc.discharge_port_id.name" />
+
+                                </td>
+
+
+                                <!-- ETA -->
+                                <td class="eta-column">
+
+                                    <span class="field-label">
+                                        ETA
+                                    </span>
+
+                                    <span class="field-value">
+
+
+                                        <t t-if="doc.report_eta_date">
+
+                                            <span t-field="doc.report_eta_date" t-options="{'format': 'dd-MMM-yy'}" />
+
+                                        </t>
+
+                                        <t t-else="">-</t>
+
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+                        </table>
+
+
+                        <!-- ROUTING INFORMATION -->
+                        <table class="arrival-table">
+
+                            <tr>
+
+                                <td class="section-banner-td">
+                                    ROUTING INFORMATION
+                                </td>
+
+                            </tr>
+
+                        </table>
+
+
+                        <!-- TABLE DE ROUTING -->
+                        <table class="arrival-table routing-table">
+
+                            <tr class="routing-header">
+
+                                <td class="routing-mode">
+                                    Mode
+                                </td>
+
+                                <td class="routing-vessel">
+                                    Vessel / Voyage / IMO
+                                </td>
+
+                                <td class="routing-carrier">
+                                    Carrier
+                                </td>
+
+                                <td class="routing-load">
+                                    Load
+                                </td>
+
+                                <td class="routing-discharge">
+                                    Disch.
+                                </td>
+
+                                <td class="routing-etd">
+                                    ETD
+                                </td>
+
+                                <td class="routing-eta">
+                                    ETA
+                                </td>
+
+                                <td class="routing-atd">
+                                    ATD
+                                </td>
+
+                                <td class="routing-ata">
+                                    ATA
+                                </td>
+
+                            </tr>
+
+
+                            <t t-if="doc.freight_route_ids">
+
+                                <t t-foreach="doc.freight_route_ids" t-as="route_line">
+
+                                    <tr>
+
+                                        <!-- MODE -->
+                                        <td class="routing-mode">
+
+                                            <span t-field="route_line.transport"/>
+
+                                        </td>
+
+
+                                        <!-- VESSEL / VOYAGE / IMO -->
+                                        <td class="routing-vessel">
+
+                                            <span t-if="route_line.vessel_id" t-field="route_line.vessel_id.name" />
+
+                                            <span t-elif="doc.vessel_id" t-field="doc.vessel_id.name" />
+
+                                        </td>
+
+
+                                        <!-- CARRIER -->
+                                        <td class="routing-carrier">
+
+                                            <span class="field-value" t-field="doc.shipping_line_id.name" />
+
+                                        </td>
+
+
+                                        <!-- LOAD -->
+                                        <td class="routing-load">
+
+                                            <span t-if="route_line.loading_port_id" t-field="route_line.loading_port_id.name" />
+
+                                        </td>
+
+
+                                        <!-- DISCHARGE -->
+                                        <td class="routing-discharge">
+
+                                            <span t-if="route_line.discharge_port_id" t-field="route_line.discharge_port_id.name" />
+
+                                        </td>
+
+
+                                        <!-- ETD -->
+                                        <td class="routing-etd">
+
+                                            <span t-field="route_line.etd" t-options="{'widget': 'date'}" />
+
+                                        </td>
+
+
+                                        <!-- ETA -->
+                                        <td class="routing-eta">
+
+                                            <span t-field="route_line.eta" t-options="{'widget': 'date'}" />
+
+                                        </td>
+
+
+                                        <!-- ATD -->
+                                        <td class="routing-atd">
+
+                                            <span t-field="route_line.atd" t-options="{'widget': 'date'}" />
+
+                                        </td>
+
+
+                                        <!-- ATA -->
+                                        <td class="routing-ata">
+
+                                            <span t-field="route_line.ata" t-options="{'widget': 'date'}" />
+
+                                        </td>
+
+                                    </tr>
+
+                                </t>
+
+                            </t>
+
+                        </table>
+
+
+                        <!-- DETALLE DE CONTENEDORES -->
+                        <table class="arrival-table container-table">
+
+                            <thead>
+
+                                <tr class="container-header">
+
+                                    <td class="container-column">
+                                        CONTAINER
+                                    </td>
+
+                                    <td class="seal-column">
+                                        SEAL
+                                    </td>
+
+                                    <td class="type-column">
+                                        TYPE
+                                    </td>
+
+                                    <td class="weight-column">
+                                        WEIGHT
+                                    </td>
+
+                                    <td class="volume-column">
+                                        VOLUME
+                                    </td>
+
+                                    <td class="packs-column">
+                                        PACK
+                                    </td>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                <t t-set="ordenes" t-value="doc.freight_order_ids" />
+
+
+                                <!-- ÓRDENES -->
+                                <t t-if="ordenes">
+
+                                    <t t-foreach="ordenes" t-as="order_line">
+
+                                        <tr>
+
+                                            <!-- CONTAINER -->
+                                            <td class="container-column">
+
+                                                <span t-field="order_line.description" />
+
+                                            </td>
+
+
+                                            <!-- SEAL -->
+                                            <td class="seal-column">
+
+                                                <t t-if="doc.report_package_ids">
+                                                    <t t-set="sellos_limpios" t-value="[seal for seal in doc.report_package_ids.mapped('carrier_seal') if seal]" />
+                                                    <t t-if="sellos_limpios">
+                                                        <span t-out="', '.join(sellos_limpios)"/>
+                                                    </t>
+                                                    <t t-else="">
+
+                                                        <span>SEAL NO ASIGNADO</span>
+
+                                                    </t>
+
+                                                </t>
+                                                <t t-else="">
+
+                                                    <span>SEAL NO ASIGNADO</span>
+
+                                                </t>
+
+                                            </td>
+
+
+                                            <!-- TYPE -->
+                                            <td class="type-column">
+
+                                                <span t-if="order_line.package_id" t-field="order_line.package_id.name" />
+
+                                            </td>
+
+
+                                            <!-- WEIGHT -->
+                                            <td class="weight-column">
+
+                                                <span t-field="order_line.gross_weight" />
+
+                                            </td>
+
+
+                                            <!-- VOLUME -->
+                                            <td class="volume-column">
+
+                                                <span t-field="order_line.volume" />
+
+                                            </td>
+
+
+                                            <!-- PACK -->
+                                            <td class="packs-column">
+
+                                                <span t-out="int(order_line.quantity) if order_line.quantity else 0" />
+
+                                            </td>
+
+                                        </tr>
+
+                                    </t>
+
+                                </t>
+
+
+                                <t t-if="not ordenes">
+
+                                    <tr>
+
+                                        <td colspan="6" class="text-center text-muted container-empty-cell">
+                                            No container information available
+                                        </td>
+
+                                    </tr>
+
+                                </t>
+
+                            </tbody>
+
+                        </table>
+
+
+                        <!-- FOOTER -->
+                        <div class="arrival-footer">
+
+                            <table class="arrival-footer-table">
+
+                                <tr>
+
+                                    <td class="arrival-footer-cell">
+
+                                        <div class="arrival-footer-box">
+
+                                            <img t-att-src="'/custom_freight_print_shipment/static/src/css/img/Pie_pagina_incargo.png'" class="arrival-footer-img" />
+
+                                        </div>
+
                                     </td>
 
                                 </tr>
 
                             </table>
 
-                        </t>
-
-
-                        <table class="arrival-table">
-
-                            <tr>
-
-                                <!-- DIRECCIÓN -->
-
-                                <td class="arrival-main-address">
-
-                                    <span class="field-value">
-                                        THE IMPORT MANAGER<br/>
-                                        ADMBIO PRODUCTOS SA DE CV<br/>
-                                        KM<br/>
-                                        BOULEVARD MIGUEL ALEMAN KM 1140<br/>
-                                        GOMEZ PALACIO CENTRO<br/>
-                                        GOMEZ PALACIO DUR 35000
-                    </span>
-
-                </td>
-
-
-                <!-- SHIPMENT -->
-
-                <td class="shipment-info-container">
-
-                    <table class="shipment-info-table">
-
-                        <tr>
-
-                            <td class="shipment-label">
-                                                SHIPMENT
-                            </td>
-
-                            <td class="shipment-value">
-                                <span t-field="doc.name" class="shipment-name-value" />
-                            </td>
-
-                        </tr>
-
-
-                        <tr>
-
-                            <td class="shipment-label">
-                                                CONSOL
-                            </td>
-
-                            <td class="shipment-value">
-                                                C2600005555
-                            </td>
-
-                        </tr>
-
-
-                        <tr>
-
-                            <td class="shipment-label-last">
-                                                DATE
-                            </td>
-
-                            <td class="shipment-value-last">
-
-                                <span t-field="doc.date_create_shipment" t-options="{'format': 'dd-MMM-yy'}" />
-
-                            </td>
-
-                        </tr>
-
-                    </table>
-
-                </td>
-
-            </tr>
-
-        </table>
-
-
-        <!-- SHIPPER / CONSIGNEE -->
-
-        <table class="arrival-table partner-table">
-
-            <tr>
-
-                <!-- SHIPPER -->
-
-                <td class="shipper-column">
-
-                    <div class="partner-box">
-
-                        <strong class="partner-title">
-                                            SHIPPER:
-                        </strong>
-
-                        <br/>
-
-                        <div t-if="doc.shipper_id" t-field="doc.shipper_id" t-options="{'widget': 'contact', 'fields': ['name', 'address'], 'no_marker': True}" />
+                        </div>
 
                     </div>
-
-                </td>
-
-                <!-- CONSIGNEE -->
-
-                <td class="consignee-column">
-
-                    <div class="partner-box">
-
-                        <strong class="partner-title">
-                                            CONSIGNEE:
-                        </strong>
-
-                        <br/>
-
-                        <div t-if="doc.consignee_id" t-field="doc.consignee_id" t-options="{'widget': 'contact', 'fields': ['name', 'address'], 'no_marker': True}" />
-
-                    </div>
-
-                </td>
-
-            </tr>
-
-        </table>
-
-
-        <!-- RELEASE TYPE / COMMODITY -->
-
-        <table class="arrival-table">
-
-            <tr>
-
-                <td class="release-column">
-
-                    <span class="field-label">
-                                        Release Type
-                    </span>
-
-                    <span class="field-value" t-field="doc.release_type" />
-
-                </td>
-
-
-                <td class="commodity-column">
-
-                    <span class="field-label">
-                                        Commodity Type
-                    </span>
-
-                    <span class="field-value">
-                                        GEN (General)
-                    </span>
-
-                </td>
-
-            </tr>
-
-
-            <tr>
-
-                <td class="carrier-column">
-
-                    <span class="field-label">
-                                        Carrier
-                    </span>
-
-                    <span class="field-value" t-field="doc.shipping_line_id.name" />
-
-                </td>
-
-
-                <td class="carrier-column">
-
-                    <span class="field-label">
-                                        GOODS TO BE CLEARED BY
-                    </span>
-
-                    <span class="field-value" t-field="doc.agent_id.name" />
-
-                </td>
-
-            </tr>
-
-        </table>
-
-
-        <!--REFERENCIAS / BILL OF LADING -->
-
-        <table class="arrival-table">
-
-            <tr>
-
-                <td class="reference-column">
-
-                    <span class="field-label">
-                                        Order Numbers / Reference
-                    </span>
-
-                    <span class="field-value"/>
-
-                </td>
-
-
-                <td class="carrier-column">
-
-                    <span class="field-label">
-                                        OCEAN BILL OF LADING
-                    </span>
-
-                    <span class="field-value" t-field="doc.obl" />
-
-                </td>
-
-
-                <td class="house-bl-column">
-
-                    <span class="field-label">
-                                        House Bill of Lading
-                    </span>
-
-                    <span class="field-value">
-                                        PKGHX02688881
-                    </span>
-
-                </td>
-
-            </tr>
-
-        </table>
-
-
-        <!-- GOODS DESCRIPTION -->
-
-        <table class="arrival-table">
-
-            <tr>
-
-                <td class="section-banner-td">
-                                    GOODS DESCRIPTION
-                </td>
-
-            </tr>
-
-            <tr>
-
-                <td class="goods-description-cell">
-
-                    <span class="field-value goods-description-value" t-field="doc.note" />
-
-                </td>
-
-            </tr>
-
-        </table>
-
-
-        <!-- TABLE PACKAGES -->
-
-        <table class="arrival-table">
-
-            <tr>
-
-                <!-- PACKAGES -->
-
-                <td class="metric-packages">
-
-                    <span class="field-label">
-                                        Packages
-                    </span>
-
-                    <span class="field-value metric-value">
-
-                        <t t-if="doc.report_package_ids">
-
-                            <span t-out="sum(doc.report_package_ids.mapped('quantity'))" />
-
-                            <span t-out="doc.report_package_ids[0].package_id.name if doc.report_package_ids[0].package_id else 'PKG'" />
-
-                        </t>
-
-                        <t t-else="">
-                                            0 
-                        </t>
-
-                    </span>
-
-                </td>
-
-                <!-- WEIGHT -->
-
-                <td class="metric-column">
-
-                    <span class="field-label">
-                                        Weight
-                    </span>
-
-                    <span class="field-value metric-value">
-
-                        <t t-if="doc.report_package_ids">
-
-                            <span t-out="sum(doc.report_package_ids.mapped('gross_weight'))" />
-
-                        </t>
-
-                        <t t-else="">
-                                            0.00
-                        </t>
-
-                    </span>
-
-                </td>
-                <!-- VOLUME -->
-
-                <td class="metric-column">
-
-                    <span class="field-label">
-                                        Volume
-                    </span>
-
-                    <span class="field-value metric-value">
-
-                        <t t-if="doc.report_package_ids">
-
-                            <span t-out="sum(doc.report_package_ids.mapped('volume'))" />
-
-                        </t>
-
-                        <t t-else="">
-                                            0.00 
-                        </t>
-
-                    </span>
-
-                </td>
-
-
-                <!-- CHARGEABLE -->
-
-                <td class="metric-column">
-
-                    <span class="field-label">
-                                        Chargeable
-                    </span>
-
-                    <span class="field-value metric-value">
-
-                        <t t-if="doc.report_package_ids">
-
-                            <span t-out="sum(doc.report_package_ids.mapped('volume'))" />
-
-                        </t>
-
-                        <t t-else="">
-                                            0.00 
-                        </t>
-
-                    </span>
-
-                </td>
-
-
-                <!-- EST DELIVERY -->
-
-                <td class="metric-column">
-
-                    <span class="field-label">
-                                        Est Delivery
-                    </span>
-
-                    <span class="field-value"/>
-
-                </td>
-
-            </tr>
-
-        </table>
-
-
-        <!-- ORIGEN / DESTINO / FECHAS -->
-
-        <table class="arrival-table">
-
-            <tr>
-
-                <!-- GOODS COLLECTED FROM -->
-
-                <td class="goods-collected-column">
-
-                    <span class="field-label">
-                                        Goods Collected From
-                    </span>
-
-                    <span class="field-value" t-field="doc.loading_port_id.name" />
-
-                </td>
-
-
-                <!-- ETD -->
-
-                <td class="etd-column">
-
-                    <span class="field-label">
-                                        ETD
-                    </span>
-
-                    <span class="field-value">
-                                        27-Jan-26
-                    </span>
-
-                </td>
-
-
-                <!-- GOODS DELIVERED TO -->
-
-                <td class="goods-delivered-column">
-
-                    <span class="field-label">
-                                        Goods Delivered To
-                    </span>
-
-                    <span class="field-value" t-field="doc.discharge_port_id.name" />
-
-                </td>
-
-
-                <!-- ETA -->
-
-                <td class="eta-column">
-
-                    <span class="field-label">
-                                        ETA
-                    </span>
-
-                    <span class="field-value">
-                                        07-Mar-26
-                    </span>
-
-                </td>
-
-            </tr>
-
-        </table>
-
-
-        <!-- ROUTING INFORMATION -->
-
-        <table class="arrival-table">
-
-            <tr>
-
-                <td class="section-banner-td">
-                                    ROUTING INFORMATION
-                </td>
-
-            </tr>
-
-        </table>
-
-
-        <!-- TABLE DE ROUTING -->
-
-        <table class="arrival-table routing-table">
-
-            <tr class="routing-header">
-
-                <td class="routing-mode">
-                                    Mode
-                </td>
-
-                <td class="routing-vessel">
-                                    Vessel / Voyage / IMO
-                </td>
-
-                <td class="routing-carrier">
-                                    Carrier
-                </td>
-
-                <td class="routing-load">
-                                    Load
-                </td>
-
-                <td class="routing-discharge">
-                                    Disch.
-                </td>
-
-                <td class="routing-etd">
-                                    ETD
-                </td>
-
-                <td class="routing-eta">
-                                    ETA
-                </td>
-
-                <td class="routing-atd">
-                                    ATD
-                </td>
-
-                <td class="routing-ata">
-                                    ATA
-                </td>
-
-            </tr>
-
-            <t t-if="doc.freight_route_ids">
-
-                <t t-foreach="doc.freight_route_ids" t-as="route_line">
-
-                    <tr>
-
-                        <!-- MODE -->
-
-                        <td class="routing-mode">
-
-                            <span t-field="route_line.transport" />
-
-                        </td>
-
-
-                        <!-- VESSEL / VOYAGE / IMO -->
-
-                        <td class="routing-vessel">
-
-                            <span t-if="route_line.vessel_id" t-field="route_line.vessel_id.name" />
-
-                            <span t-elif="doc.vessel_id" t-field="doc.vessel_id.name" />
-
-                        </td>
-
-
-                        <!-- CARRIER -->
-
-                        <td class="routing-carrier">
-
-                            <span class="field-value" t-field="doc.shipping_line_id.name" />
-
-                        </td>
-
-
-                        <!-- LOAD -->
-
-                        <td class="routing-load">
-
-                            <span t-if="route_line.loading_port_id" t-field="route_line.loading_port_id.name" />
-
-                        </td>
-
-
-                        <!-- DISCHARGE -->
-
-                        <td class="routing-discharge">
-
-                            <span t-if="route_line.discharge_port_id" t-field="route_line.discharge_port_id.name" />
-
-                        </td>
-
-
-                        <!-- ETD -->
-
-                        <td class="routing-etd">
-
-                            <span t-field="route_line.etd" t-options="{'widget': 'date'}" />
-
-                        </td>
-
-
-                        <!-- ETA -->
-
-                        <td class="routing-eta">
-
-                            <span t-field="route_line.eta" t-options="{'widget': 'date'}" />
-
-                        </td>
-
-
-                        <!-- ATD -->
-
-                        <td class="routing-atd">
-
-                            <span t-field="route_line.atd" t-options="{'widget': 'date'}" />
-
-                        </td>
-
-
-                        <!-- ATA -->
-
-                        <td class="routing-ata">
-
-                            <span t-field="route_line.ata" t-options="{'widget': 'date'}" />
-
-                        </td>
-
-                    </tr>
 
                 </t>
 
             </t>
 
-        </table>
+        </t>
 
-
-        <!--  DETALLE DE CONTENEDORES -->
-
-        <table class="arrival-table container-table">
-
-            <thead>
-
-                <tr class="container-header">
-
-                    <td class="container-column">
-                                        CONTAINER
-                    </td>
-
-                    <td class="seal-column">
-                                        SEAL
-                    </td>
-
-                    <td class="type-column">
-                                        TYPE
-                    </td>
-
-                    <td class="weight-column">
-                                        WEIGHT
-                    </td>
-
-                    <td class="volume-column">
-                                        VOLUME
-                    </td>
-
-                    <td class="packs-column">
-                                        PACK
-                    </td>
-
-                </tr>
-
-            </thead>
-
-
-            <tbody>
-
-                <t t-set="ordenes" t-value="doc.freight_order_ids" />
-
-
-                <!-- ÓRDENES -->
-
-                <t t-if="ordenes">
-
-                    <t t-foreach="ordenes" t-as="order_line">
-
-                        <tr>
-
-                            <!-- CONTAINER -->
-
-                            <td class="container-column">
-
-                                <span t-field="order_line.description" />
-
-                            </td>
-
-
-                            <!-- SEAL -->
-
-                            <td class="seal-column">
-
-                                <t t-if="doc.report_package_ids">
-
-                                    <span t-out="', '.join(doc.report_package_ids.mapped('carrier_seal') if doc.report_package_ids.mapped('carrier_seal') else []) or '-'" />
-
-                                </t>
-
-                                <t t-else="">
-                                                    -
-                                </t>
-
-                            </td>
-
-
-                            <!-- TYPE -->
-
-                            <td class="type-column">
-
-                                <span t-if="order_line.package_id" t-field="order_line.package_id.name" />
-
-                            </td>
-
-
-                            <!-- WEIGHT -->
-
-                            <td class="weight-column">
-
-                                <span t-field="order_line.gross_weight" />
-
-                            </td>
-
-
-                            <!-- VOLUME -->
-
-                            <td class="volume-column">
-
-                                <span t-field="order_line.volume" />
-
-                            </td>
-
-
-                            <!-- PACK -->
-
-                            <td class="packs-column">
-
-                                <span t-out="int(order_line.quantity) if order_line.quantity else 0" />
-
-                            </td>
-
-                        </tr>
-
-                    </t>
-
-                </t>
-                <t t-if="not ordenes">
-
-                    <tr>
-
-                        <td colspan="6" class="text-center text-muted container-empty-cell">
-                                            No container information available
-                        </td>
-
-                    </tr>
-
-                </t>
-
-            </tbody>
-
-        </table>
-
-
-        <!-- FOOTER -->
-
-        <div class="arrival-footer">
-
-            <table class="arrival-footer-table">
-
-                <tr>
-
-                    <td class="arrival-footer-cell">
-
-                        <div class="arrival-footer-box">
-
-                            <img t-att-src="'/custom_freight_print_shipment/static/src/css/img/Pie_pagina_incargo.png'" class="arrival-footer-img" />
-
-                        </div>
-
-                    </td>
-
-                </tr>
-
-            </table>
-
-        </div>
-
-    </div>
-
-</t>
-
-</t>
-
-</t>
-
-</template>
+    </template>
 
 </odoo>

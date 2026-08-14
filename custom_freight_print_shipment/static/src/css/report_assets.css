@@ -112,7 +112,7 @@
 
 .arrival-table td {
   border: 1px solid #000;
-  padding: 4px 6px;
+  padding: 4px 2px;
   vertical-align: top;
 }
 
@@ -253,6 +253,52 @@
 
 .metric-value {
   font-weight: bold;
+}
+
+/* GENERAL TABLA DE PAQUETES */
+.metrics-strip-table {
+  width: 100%;
+  table-layout: auto !important;
+  height: auto !important;
+  margin-bottom: 12px;
+  border-collapse: collapse;
+}
+
+.metrics-strip-cell {
+  padding: 6px 10px;
+  vertical-align: middle;
+  height: auto !important;
+  background-color: #fafafa;
+  border: 1px solid #000000;
+}
+
+.metric-inline-block {
+  display: inline-block;
+  margin-right: 25px;
+}
+
+.metric-inline-block-last {
+  display: inline-block;
+}
+
+.metric-strip-label {
+  text-transform: uppercase;
+  font-size: 11px;
+  color: #000000;
+  font-weight: normal;
+}
+
+.metric-strip-value {
+  font-weight: bold;
+  font-size: 12px;
+  color: #000000;
+  margin-left: 5px;
+}
+
+.metric-strip-empty {
+  color: #000000;
+  font-style: italic;
+  font-size: 11px;
 }
 
 /* ORIGEN / DESTINO / FECHAS */
