@@ -70,6 +70,13 @@
                                 font-weight: bold;
                                 border-top: 1px solid #000 !important;
                             }
+                            /* Nota / descripción adicional debajo del nombre del producto */
+                            .concept-note-text {
+                                font-size: 10px;
+                                color: #555555;
+                                white-space: pre-line;
+                                line-height: 1.2;
+                            }
                         </style>
                         <!-- Encabezado de Factura -->
                         <div class="row g-0 mt-4">
@@ -238,8 +245,21 @@
                                                 <span t-if="line.product_uom_id" t-field="line.product_uom_id.name"/>
                                             </td>
                                             <td style="vertical-align: top; padding: 5px 0 0 5px;">
+                                                <!-- Nombre del producto -->
                                                 <span t-if="line.product_id" t-field="line.product_id.name"/>
-                                                <span t-else="" t-field="line.name"/>
+                                                <span t-if="not line.product_id" t-field="line.name" t-options="{'widget': 'text'}" dir="auto"/>
+                                                <!-- Nota real: cualquier línea de line.name que NO sea
+                                                     exactamente igual al nombre del producto (sin importar
+                                                     si va en la línea 1, 2, etc.) -->
+                                                <t t-if="line.product_id and line.name">
+                                                    <t t-set="note_lines" t-value="[l for l in line.name.split(chr(10)) if l.strip() and l.strip() != line.product_id.name.strip()]"/>
+                                                    <t t-set="note_text" t-value="chr(10).join(note_lines).strip()"/>
+                                                    <t t-if="note_text">
+                                                        <div class="concept-note-text" style="margin-top: -3px;">
+                                                            <t t-out="note_text"/>
+                                                        </div>
+                                                    </t>
+                                                </t>
                                             </td>
                                             <td class="text-end" style="vertical-align: top; padding: 5px 5px 0 0;">
                                                 <span t-field="line.price_unit"/>
@@ -266,7 +286,20 @@
                                             </td>
                                         </tr>
                                     </t>
+                                    <t t-elif="line.display_type == 'line_note'">
+                                        <tr class="o_line_note">
+                                            <td colspan="6">
+                                                <span
+                                                    t-if="line.name"
+                                                    t-field="line.name"
+                                                    t-options="{'widget': 'text'}"
+                                                    dir="auto"
+                                                />
+                                            </td>
+                                        </tr>
+                                    </t>
                                 </t>
+
                             </tbody>
                         </table>
                         <!-- Totales CFDI -->
@@ -354,6 +387,10 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <!-- ===== NOTAS / TÉRMINOS Y CONDICIONES ===== -->
+                        <div t-if="not is_html_empty(doc.narration)" class="mt-3" name="custom_notes" style="font-size: 12px;">
+                            <span t-field="doc.narration"/>
                         </div>
                     </div>
                 </t>
