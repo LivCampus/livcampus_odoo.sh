@@ -1,6 +1,5 @@
 {
-    'name': 'Formato de Factura Personalizado - Incargo
-',
+    'name': 'Formato de Factura Personalizado - Incargo',
     'version': '19.0.1.1.0',
     'depends': [
         'account',
