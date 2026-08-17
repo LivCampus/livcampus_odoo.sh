@@ -5,7 +5,7 @@
             <t t-if="o.company_id.name == 'KUUCH LOGISTICS MEXICO'">
                 <!-- ===== TU FORMATO CUSTOM ===== -->
                 <t t-set="doc" t-value="o"/>
-                <t t-call="web.internal_layout">
+                <t t-call="web.external_layout">
                     <div class="page" style="font-family: sans-serif;">
                         <t t-set="cfdi_values" t-value="doc._l10n_mx_edi_get_extra_invoice_report_values() or {}"/>
                         <style>
@@ -69,6 +69,13 @@
                                 background-color: #f2f2f2;
                                 font-weight: bold;
                                 border-top: 1px solid #000 !important;
+                            }
+                            /* Nota / descripción adicional debajo del nombre del producto */
+                            .concept-note-text {
+                                font-size: 10px;
+                                color: #555555;
+                                white-space: pre-line;
+                                line-height: 1.2;
                             }
                         </style>
                         <!-- Encabezado de Factura -->
@@ -238,8 +245,20 @@
                                                 <span t-if="line.product_uom_id" t-field="line.product_uom_id.name"/>
                                             </td>
                                             <td style="vertical-align: top; padding: 5px 0 0 5px;">
+                                                <!-- Nombre del producto -->
                                                 <span t-if="line.product_id" t-field="line.product_id.name"/>
-                                                <span t-else="" t-field="line.name"/>
+                                                <span t-if="not line.product_id" t-field="line.name" t-options="{'widget': 'text'}" dir="auto"/>
+                                                <!-- Nota real: todo lo que venga DESPUÉS de la primera línea de line.name
+                                                     (la primera línea suele repetir "[REF] Nombre producto") -->
+                                                <t t-if="line.product_id and line.name">
+                                                    <t t-set="note_lines" t-value="line.name.split(chr(10))[1:]"/>
+                                                    <t t-set="note_text" t-value="chr(10).join(note_lines).strip()"/>
+                                                    <t t-if="note_text">
+                                                        <div class="concept-note-text" style="margin-top: -3px;">
+                                                            <t t-out="note_text"/>
+                                                        </div>
+                                                    </t>
+                                                </t>
                                             </td>
                                             <td class="text-end" style="vertical-align: top; padding: 5px 5px 0 0;">
                                                 <span t-field="line.price_unit"/>
@@ -266,7 +285,20 @@
                                             </td>
                                         </tr>
                                     </t>
+                                    <t t-elif="line.display_type == 'line_note'">
+                                        <tr class="o_line_note">
+                                            <td colspan="6">
+                                                <span
+                                                    t-if="line.name"
+                                                    t-field="line.name"
+                                                    t-options="{'widget': 'text'}"
+                                                    dir="auto"
+                                                />
+                                            </td>
+                                        </tr>
+                                    </t>
                                 </t>
+
                             </tbody>
                         </table>
                         <!-- Totales CFDI -->

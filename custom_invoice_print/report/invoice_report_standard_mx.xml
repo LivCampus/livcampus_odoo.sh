@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_invoice_document_standard_mx_custom" inherit_id="account.report_invoice_document" priority="99">
+        <xpath expr="//div[@id='partner_vat_address_not_same_as_shipping']" position="after">
+
+            <div
+                class="mt-1"
+                name="mx_fiscal_regime_address_not_same_as_shipping"
+                t-if="
+                    o.company_id.name != 'KUUCH LOGISTICS MEXICO'
+                    and o.move_type in ('out_invoice', 'out_refund')
+                    and (
+                        'l10n_mx_edi_cfdi_uuid' not in o
+                        or not o.l10n_mx_edi_cfdi_uuid
+                    )
+                "
+            >
+                <strong>Fiscal Regime:</strong>
+
+                <span
+                    t-if="
+                        o.partner_id
+                        and 'l10n_mx_edi_fiscal_regime' in o.partner_id
+                        and o.partner_id.l10n_mx_edi_fiscal_regime
+                    "
+                    t-field="o.partner_id.l10n_mx_edi_fiscal_regime"
+                />
+
+                <span
+                    t-else=""
+                    class="text-muted"
+                >
+                    Not defined
+                </span>
+
+            </div>
+
+        </xpath>
+
+        <xpath
+            expr="//div[@id='partner_vat_address_same_as_shipping']"
+            position="after"
+        >
+
+            <div
+                class="mt-1"
+                name="mx_fiscal_regime_address_same_as_shipping"
+                t-if="
+                    o.company_id.name != 'KUUCH LOGISTICS MEXICO'
+                    and o.move_type in ('out_invoice', 'out_refund')
+                    and (
+                        'l10n_mx_edi_cfdi_uuid' not in o
+                        or not o.l10n_mx_edi_cfdi_uuid
+                    )
+                "
+            >
+
+                <strong>Fiscal Regime:</strong>
+
+                <span
+                    t-if="
+                        o.partner_id
+                        and 'l10n_mx_edi_fiscal_regime' in o.partner_id
+                        and o.partner_id.l10n_mx_edi_fiscal_regime
+                    "
+                    t-field="o.partner_id.l10n_mx_edi_fiscal_regime"
+                />
+
+                <span
+                    t-else=""
+                    class="text-muted"
+                >
+                    Not defined
+                </span>
+
+            </div>
+
+        </xpath>
+
+        <xpath
+            expr="//div[@id='partner_vat_no_shipping']"
+            position="after"
+        >
+
+            <div
+                class="mt-1"
+                name="mx_fiscal_regime_no_shipping"
+                t-if="
+                    o.company_id.name != 'KUUCH LOGISTICS MEXICO'
+                    and o.move_type in ('out_invoice', 'out_refund')
+                    and (
+                        'l10n_mx_edi_cfdi_uuid' not in o
+                        or not o.l10n_mx_edi_cfdi_uuid
+                    )
+                "
+            >
+
+                <strong>Fiscal Regime:</strong>
+
+                <span
+                    t-if="
+                        o.partner_id
+                        and 'l10n_mx_edi_fiscal_regime' in o.partner_id
+                        and o.partner_id.l10n_mx_edi_fiscal_regime
+                    "
+                    t-field="o.partner_id.l10n_mx_edi_fiscal_regime"
+                />
+
+                <span
+                    t-else=""
+                    class="text-muted"
+                >
+                    Not defined
+                </span>
+
+            </div>
+
+        </xpath>
+
+
+       
+        <xpath
+            expr="//div[@id='informations']"
+            position="inside"
+        >
+
+
+            
+
+            <div
+                class="col"
+                name="mx_cfdi_usage_pre_cfdi"
+                t-if="
+                    o.company_id.name != 'KUUCH LOGISTICS MEXICO'
+                    and o.move_type in ('out_invoice', 'out_refund')
+                    and (
+                        'l10n_mx_edi_cfdi_uuid' not in o
+                        or not o.l10n_mx_edi_cfdi_uuid
+                    )
+                "
+            >
+
+                <strong>Usage</strong>
+
+                <div>
+
+                    <t
+                        t-if="
+                            'l10n_mx_edi_usage' in o
+                            and o.l10n_mx_edi_usage
+                        "
+                    >
+
+                        <!-- Clave SAT -->
+                        <span
+                            t-esc="o.l10n_mx_edi_usage"
+                        />
+
+                        <span>
+                            -
+                        </span>
+
+                        <!-- Descripción traducida -->
+                        <span
+                            t-field="o.l10n_mx_edi_usage"
+                        />
+
+                    </t>
+
+                    <span
+                        t-else=""
+                        class="text-muted"
+                    >
+                        Not defined
+                    </span>
+
+                </div>
+
+            </div>
+
+
+         
+            <div
+                class="col"
+                name="mx_payment_way_pre_cfdi"
+                t-if="
+                    o.company_id.name != 'KUUCH LOGISTICS MEXICO'
+                    and o.move_type in ('out_invoice', 'out_refund')
+                    and (
+                        'l10n_mx_edi_cfdi_uuid' not in o
+                        or not o.l10n_mx_edi_cfdi_uuid
+                    )
+                "
+            >
+
+                <strong>Payment Way:</strong>
+
+                <div>
+
+                    <t
+                        t-if="
+                            'l10n_mx_edi_payment_method_id' in o
+                            and o.l10n_mx_edi_payment_method_id
+                        "
+                    >
+
+                        <!-- Clave SAT: 01, 02, 03, etc. -->
+                        <span
+                            t-if="
+                                'code' in o.l10n_mx_edi_payment_method_id
+                                and o.l10n_mx_edi_payment_method_id.code
+                            "
+                            t-esc="o.l10n_mx_edi_payment_method_id.code"
+                        />
+
+                        <!-- Separador -->
+                        <span
+                            t-if="
+                                'code' in o.l10n_mx_edi_payment_method_id
+                                and o.l10n_mx_edi_payment_method_id.code
+                            "
+                        >
+                            -
+                        </span>
+
+                        <!-- Descripción traducida -->
+                        <span
+                            t-field="o.l10n_mx_edi_payment_method_id.display_name"
+                        />
+
+                    </t>
+
+                    <span
+                        t-else=""
+                        class="text-muted"
+                    >
+                        Not defined
+                    </span>
+
+                </div>
+
+            </div>
+
+
+          
+
+            <div
+                class="col"
+                name="mx_payment_method_pre_cfdi"
+                t-if="
+                    o.company_id.name != 'KUUCH LOGISTICS MEXICO'
+                    and o.move_type in ('out_invoice', 'out_refund')
+                    and (
+                        'l10n_mx_edi_cfdi_uuid' not in o
+                        or not o.l10n_mx_edi_cfdi_uuid
+                    )
+                "
+            >
+
+                <strong>Payment Method:</strong>
+
+                <div>
+
+                    <span
+                        t-if="
+                            'l10n_mx_edi_payment_policy' in o
+                            and o.l10n_mx_edi_payment_policy
+                        "
+                        t-field="o.l10n_mx_edi_payment_policy"
+                    />
+
+                    <span
+                        t-else=""
+                        class="text-muted"
+                    >
+                        Not defined
+                    </span>
+
+                </div>
+
+            </div>
+
+        </xpath>
+
+
+        
+        <xpath
+            expr="//table[@name='invoice_line_table']/thead/tr/th[@name='th_description']"
+            position="after"
+        >
+
+            <th
+                name="th_mx_product_code_pre_cfdi"
+                class="text-center"
+                t-if="
+                    o.company_id.name != 'KUUCH LOGISTICS MEXICO'
+                    and o.move_type in ('out_invoice', 'out_refund')
+                    and (
+                        'l10n_mx_edi_cfdi_uuid' not in o
+                        or not o.l10n_mx_edi_cfdi_uuid
+                    )
+                "
+            >
+
+                <span>
+                    Product code
+                </span>
+
+            </th>
+
+        </xpath>
+
+
+       
+
+        <xpath
+            expr="//table[@name='invoice_line_table']/thead/tr/th[@name='th_priceunit']"
+            position="after"
+        >
+
+            <th
+                name="th_mx_unit_code_pre_cfdi"
+                class="text-center"
+                t-if="
+                    o.company_id.name != 'KUUCH LOGISTICS MEXICO'
+                    and o.move_type in ('out_invoice', 'out_refund')
+                    and (
+                        'l10n_mx_edi_cfdi_uuid' not in o
+                        or not o.l10n_mx_edi_cfdi_uuid
+                    )
+                "
+            >
+
+                <span>
+                    Unit code
+                </span>
+
+            </th>
+
+        </xpath>
+
+
+        
+        <xpath
+            expr="//table[@name='invoice_line_table']//td[@name='account_invoice_line_name']"
+            position="after"
+        >
+
+            <td
+                name="td_mx_product_code_pre_cfdi"
+                class="text-center"
+                t-if="
+                    o.company_id.name != 'KUUCH LOGISTICS MEXICO'
+                    and o.move_type in ('out_invoice', 'out_refund')
+                    and (
+                        'l10n_mx_edi_cfdi_uuid' not in o
+                        or not o.l10n_mx_edi_cfdi_uuid
+                    )
+                "
+            >
+
+                <span
+                    t-if="
+                        line.product_id
+                        and 'unspsc_code_id' in line.product_id
+                        and line.product_id.unspsc_code_id
+                    "
+                    t-field="line.product_id.unspsc_code_id.code"
+                />
+
+                <span
+                    t-else=""
+                    class="text-muted"
+                >
+                    -
+                </span>
+
+            </td>
+
+        </xpath>
+
+
+        <xpath
+            expr="//table[@name='invoice_line_table']//td[@name='td_price_unit']"
+            position="after"
+        >
+
+            <td
+                name="td_mx_unit_code_pre_cfdi"
+                class="text-center"
+                t-if="
+                    o.company_id.name != 'KUUCH LOGISTICS MEXICO'
+                    and o.move_type in ('out_invoice', 'out_refund')
+                    and (
+                        'l10n_mx_edi_cfdi_uuid' not in o
+                        or not o.l10n_mx_edi_cfdi_uuid
+                    )
+                "
+            >
+
+                <span
+                    class="text-muted"
+                >
+                    -
+                </span>
+
+            </td>
+
+        </xpath>
+
+    </template>
+
+</odoo>
