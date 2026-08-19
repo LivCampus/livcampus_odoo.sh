@@ -4,7 +4,7 @@ class FreightBooking(models.Model):
     _inherit = 'freight.booking'
 
     customer_id = fields.Many2one(
-        'res.partner', string='Customer', required=True,
+        'res.partner', string='Customer', required=False,
         help='Customer of the quotation. Used to print the quotation PDF (company, attention and language).')
 
     shipper_id = fields.Many2one(
