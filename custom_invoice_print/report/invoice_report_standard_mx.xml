@@ -16,7 +16,7 @@
                     )
                 "
             >
-                <strong>Fiscal Regime:</strong>
+                <strong>Régimen Fiscal:</strong>
 
                 <span
                     t-if="
@@ -31,7 +31,7 @@
                     t-else=""
                     class="text-muted"
                 >
-                    Not defined
+                    No definido
                 </span>
 
             </div>
@@ -56,7 +56,7 @@
                 "
             >
 
-                <strong>Fiscal Regime:</strong>
+                <strong>Régimen Fiscal:</strong>
 
                 <span
                     t-if="
@@ -71,7 +71,7 @@
                     t-else=""
                     class="text-muted"
                 >
-                    Not defined
+                    No definido
                 </span>
 
             </div>
@@ -96,7 +96,7 @@
                 "
             >
 
-                <strong>Fiscal Regime:</strong>
+                <strong>Régimen Fiscal:</strong>
 
                 <span
                     t-if="
@@ -111,7 +111,7 @@
                     t-else=""
                     class="text-muted"
                 >
-                    Not defined
+                    No definido
                 </span>
 
             </div>
@@ -141,7 +141,7 @@
                 "
             >
 
-                <strong>Usage</strong>
+                <strong>Uso CFDI</strong>
 
                 <div>
 
@@ -172,7 +172,7 @@
                         t-else=""
                         class="text-muted"
                     >
-                        Not defined
+                        No definido
                     </span>
 
                 </div>
@@ -194,7 +194,7 @@
                 "
             >
 
-                <strong>Payment Way:</strong>
+                <strong>Forma de Pago:</strong>
 
                 <div>
 
@@ -235,7 +235,7 @@
                         t-else=""
                         class="text-muted"
                     >
-                        Not defined
+                        No definido
                     </span>
 
                 </div>
@@ -258,7 +258,7 @@
                 "
             >
 
-                <strong>Payment Method:</strong>
+                <strong>Método de Pago:</strong>
 
                 <div>
 
@@ -274,7 +274,7 @@
                         t-else=""
                         class="text-muted"
                     >
-                        Not defined
+                        No definido
                     </span>
 
                 </div>
@@ -304,7 +304,7 @@
             >
 
                 <span>
-                    Product code
+                    Clave producto
                 </span>
 
             </th>
@@ -333,7 +333,7 @@
             >
 
                 <span>
-                    Unit code
+                    Clave unidad
                 </span>
 
             </th>
@@ -400,6 +400,16 @@
             >
 
                 <span
+                    t-if="
+                        line.product_uom_id
+                        and 'unspsc_category_id' in line.product_uom_id
+                        and line.product_uom_id.unspsc_category_id
+                    "
+                    t-field="line.product_uom_id.unspsc_category_id.code"
+                />
+
+                <span
+                    t-else=""
                     class="text-muted"
                 >
                     -
