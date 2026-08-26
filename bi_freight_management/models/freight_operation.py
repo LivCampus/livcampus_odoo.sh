@@ -97,17 +97,17 @@ class FreightOperation(models.Model):
     freight_tracking_ids = fields.One2many(
         'freight.tracking', 'freight_operation_id', string='Freight Tracking')
     expected_receivable = fields.Float(
-        string='Expected Receivable', compute='_compute_expected_receivable', store=True)
+        string='Expected Receivable', compute='_compute_expected_receivable')
     expected_payable = fields.Float(
-        string='Expected Payable', compute='_compute_expected_payable', store=True)
+        string='Expected Payable', compute='_compute_expected_payable')
     expected_margin = fields.Float(
-        string='Expected Margin', compute='_compute_expected_margin', store=True)
+        string='Expected Margin', compute='_compute_expected_margin')
     actual_receivable = fields.Float(
-        string='Actual Receivable', compute="_compute_actual_receivable", store=True)
+        string='Actual Receivable', compute="_compute_actual_receivable")
     actual_margin = fields.Float(
-        string='Actual Margin', compute='_compute_actual_margin', store=True)
+        string='Actual Margin', compute='_compute_actual_margin')
     actual_payable = fields.Float(
-        string='Actual Payable', compute='_compute_actual_payable', store=True)
+        string='Actual Payable', compute='_compute_actual_payable')
     receivable_due = fields.Float(string='Receivable Due', readonly=True)
     payable_due = fields.Float(string='Payable Due', readonly=True)
     is_booking = fields.Boolean(string='Booking', readonly=True)
