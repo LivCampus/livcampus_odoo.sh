@@ -137,6 +137,15 @@
                                             <span t-field="doc.name"/>
                                         </div>
                                     </div>
+                                    <!-- No. Shipment (freight.operation ligado a las líneas de la factura) -->
+                                    <div class="row g-0 mt-2">
+                                        <div class="col-5">
+                                            <strong>No. Shipment</strong>
+                                        </div>
+                                        <div class="col-7 text-end">
+                                            <span t-out="', '.join(sorted(set(doc.invoice_line_ids.mapped('service_id.freight_operation_id.name')))) or '-'"/>
+                                        </div>
+                                    </div>
                                     <!-- UUID -->
                                     <div class="row g-0 mt-2">
                                         <div class="col-5">

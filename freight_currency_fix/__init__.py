@@ -234,6 +234,7 @@ class FreightServiceInvoiceBill(models.TransientModel):
             'move_type': 'out_invoice' if self.wizard_type == 'customer_invoice' else 'in_invoice',
             'invoice_date': fields.Date.today(),
             'currency_id': currency_id,
+            'l10n_mx_edi_cfdi_to_public': False,
             'line_ids': invoice_line_ids})
         if invoice:
             invoice.action_post()
