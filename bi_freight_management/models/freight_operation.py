@@ -272,7 +272,8 @@ class FreightOperation(models.Model):
             invoice_ids = self.env['account.move.line'].search(
                 [('service_id', 'in', record.freight_service_ids.ids)]).filtered(
                 lambda line: line.move_id.move_type == 'out_invoice').mapped('move_id')
-            record.invoice_date = max(invoice_ids.mapped('invoice_date')) if invoice_ids else False
+            dates = [d for d in invoice_ids.mapped('invoice_date') if d]
+            record.invoice_date = max(dates) if dates else False
 
     @api.model_create_multi
     def create(self, vals):

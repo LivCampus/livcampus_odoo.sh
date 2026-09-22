@@ -31,7 +31,8 @@ class FreightOperation(models.Model):
         for record in self:
             moves = self.env['account.move.line'].search(
                 [('service_id', 'in', record.freight_service_ids.ids)]).filtered(
-                lambda l: l.move_id.move_type == 'out_invoice').mapped('move_id')
+                lambda l: l.move_id.move_type == 'out_invoice'
+                and l.move_id.state != 'cancel').mapped('move_id')
             record.expected_receivable = record._convert_moves_to_company_currency(
                 moves, 'amount_total') if moves else 0.00
 
@@ -40,7 +41,8 @@ class FreightOperation(models.Model):
         for record in self:
             moves = self.env['account.move.line'].search(
                 [('service_id', 'in', record.freight_service_ids.ids)]).filtered(
-                lambda l: l.move_id.move_type == 'in_invoice').mapped('move_id')
+                lambda l: l.move_id.move_type == 'in_invoice'
+                and l.move_id.state != 'cancel').mapped('move_id')
             record.expected_payable = record._convert_moves_to_company_currency(
                 moves, 'amount_total') if moves else 0.00
 
@@ -49,7 +51,8 @@ class FreightOperation(models.Model):
         for record in self:
             moves = self.env['account.move.line'].search(
                 [('service_id', 'in', record.freight_service_ids.ids)]).filtered(
-                lambda l: l.move_id.move_type == 'out_invoice').mapped('move_id')
+                lambda l: l.move_id.move_type == 'out_invoice'
+                and l.move_id.state != 'cancel').mapped('move_id')
             paid = record._convert_moves_to_company_currency(moves, 'amount_residual') if moves else 0.00
             record.actual_receivable = record.expected_receivable - paid
             record.receivable_due = paid
@@ -59,7 +62,8 @@ class FreightOperation(models.Model):
         for record in self:
             moves = self.env['account.move.line'].search(
                 [('service_id', 'in', record.freight_service_ids.ids)]).filtered(
-                lambda l: l.move_id.move_type == 'in_invoice').mapped('move_id')
+                lambda l: l.move_id.move_type == 'in_invoice'
+                and l.move_id.state != 'cancel').mapped('move_id')
             paid = record._convert_moves_to_company_currency(moves, 'amount_residual') if moves else 0.00
             record.actual_payable = record.expected_payable - paid
             record.payable_due = paid
