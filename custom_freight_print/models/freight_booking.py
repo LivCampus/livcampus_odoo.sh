@@ -1,4 +1,5 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
+
 
 class FreightBooking(models.Model):
     _inherit = 'freight.booking'
@@ -37,13 +38,57 @@ class FreightBooking(models.Model):
     
     
     def action_convert_shipment(self):
-       result = super(FreightBooking, self).action_convert_shipment()
-       for booking in self:
-           if booking.etd_date and booking.freight_operation_id:
-               if 'etd_date' in booking.freight_operation_id._fields:
-                   booking.freight_operation_id.write({'etd_date': booking.etd_date})
-       return result
+        result = super(FreightBooking, self).action_convert_shipment()
+        missing_vendor = []
+        for booking in self:
+            if booking.etd_date and booking.freight_operation_id:
+                if 'etd_date' in booking.freight_operation_id._fields:
+                    booking.freight_operation_id.write({'etd_date': booking.etd_date})
+            if booking.freight_operation_id:
+                if not booking._create_shipment_services(booking.freight_operation_id):
+                    missing_vendor.append(booking.name)
 
+        if missing_vendor:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Services not copied'),
+                    'message': _(
+                        'The booking lines were not copied to the shipment because the '
+                        'Agent or Shipping Line is missing on the booking: %s. '
+                        'Add the services manually in the shipment.',
+                        ', '.join(missing_vendor)),
+                    'type': 'warning',
+                    'sticky': True,
+                    'next': {'type': 'ir.actions.act_window_close'},
+                },
+            }
+        return result
+
+    def _create_shipment_services(self, operation):
+        self.ensure_one()
+        if operation.freight_service_ids:
+            return True
+        vendor = self.agent_id or self.shipping_line_id
+        if not vendor:
+            return False
+        service_vals = []
+        for line in self.booking_line_ids.sorted(lambda l: (l.sequence, l.id)):
+            if line.display_type or not line.product_id:
+                continue
+            service_vals.append({
+                'freight_operation_id': operation.id,
+                'service_id': line.product_id.product_tmpl_id.id,
+                'vendor_id': vendor.id,
+                'description': line.name or line.product_id.display_name,
+                'quantity': line.quantity,
+                'sale': line.price_unit,
+                'currency_id': line.currency_id.id if line.currency_id else False,
+            })
+        if service_vals:
+            self.env['freight.service'].create(service_vals)
+        return True
 
 class FreightBookingLine(models.Model):
     _inherit = 'freight.booking.line'

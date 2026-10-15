@@ -207,7 +207,12 @@
                                             <strong>Forma de Pago</strong>
                                         </div>
                                         <div class="col-6 text-end">
-                                            <span t-if="'l10n_mx_edi_payment_method_id' in doc" t-field="doc.l10n_mx_edi_payment_method_id.display_name"/>
+                                            <t t-if="'l10n_mx_edi_payment_method_id' in doc and doc.l10n_mx_edi_payment_method_id">
+                                                <span t-field="doc.l10n_mx_edi_payment_method_id.display_name"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span>99 - Por definir</span>
+                                            </t>
                                         </div>
                                     </div>
                                     <!-- Método de Pago -->

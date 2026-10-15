@@ -381,12 +381,12 @@
         </xpath>
 
 
-        <xpath
+         <xpath
             expr="//table[@name='invoice_line_table']//td[@name='td_price_unit']"
             position="after"
         >
 
-            <td
+  <td
                 name="td_mx_unit_code_pre_cfdi"
                 class="text-center"
                 t-if="
@@ -398,26 +398,18 @@
                     )
                 "
             >
+        <span t-if="line.product_uom_id and line.product_uom_id.unspsc_code_id" t-field="line.product_uom_id.unspsc_code_id.code"/>
 
-                <span
-                    t-if="
-                        line.product_uom_id
-                        and 'unspsc_category_id' in line.product_uom_id
-                        and line.product_uom_id.unspsc_category_id
-                    "
-                    t-field="line.product_uom_id.unspsc_category_id.code"
-                />
-
-                <span
+       <span
                     t-else=""
                     class="text-muted"
                 >
                     -
                 </span>
 
-            </td>
+    </td>
 
-        </xpath>
+</xpath>
 
     </template>
 
