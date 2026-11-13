@@ -2,415 +2,185 @@
 <odoo>
 
     <template id="report_invoice_document_standard_mx_custom" inherit_id="account.report_invoice_document" priority="99">
+
+        <!-- ==============================================================
+             CONDICIONES GLOBALES (se calculan una sola vez y se reutilizan)
+             mx_is_sale:           factura/nota de crédito de VENTA (cliente)
+             mx_show_extra:        es de venta y la compañía NO es KUUCH ni INNOVACION EN CARGA (timbrada y no timbrada)
+             mx_pre_cfdi:          lo anterior y además la factura NO está timbrada
+             mx_has_partner_regime: el cliente tiene régimen fiscal definido
+             mx_has_payment_method: la factura tiene forma de pago
+             mx_has_payment_code:   la forma de pago tiene clave SAT
+             ============================================================== -->
+        <xpath expr="//t[@t-set='forced_vat']" position="after">
+            <t t-set="mx_is_sale" t-value="o.move_type in ('out_invoice', 'out_refund')"/>
+            <t t-set="mx_show_extra" t-value="mx_is_sale and o.company_id.name not in ('KUUCH LOGISTICS MEXICO', 'INNOVACION EN CARGA LOGISTICA DE MEXICO')"/>
+            <t t-set="mx_pre_cfdi" t-value="mx_show_extra and ('l10n_mx_edi_cfdi_uuid' not in o or not o.l10n_mx_edi_cfdi_uuid)"/>
+            <t t-set="mx_has_partner_regime"
+               t-value="bool(o.partner_id and 'l10n_mx_edi_fiscal_regime' in o.partner_id and o.partner_id.l10n_mx_edi_fiscal_regime)"/>
+            <t t-set="mx_has_payment_method"
+               t-value="bool('l10n_mx_edi_payment_method_id' in o and o.l10n_mx_edi_payment_method_id)"/>
+            <t t-set="mx_has_payment_code"
+               t-value="bool(mx_has_payment_method and 'code' in o.l10n_mx_edi_payment_method_id and o.l10n_mx_edi_payment_method_id.code)"/>
+        </xpath>
+
+        <!-- ==============================================================
+             RÉGIMEN FISCAL DEL CLIENTE (3 variantes de dirección)
+             ============================================================== -->
         <xpath expr="//div[@id='partner_vat_address_not_same_as_shipping']" position="after">
-
-            <div
-                class="mt-1"
-                name="mx_fiscal_regime_address_not_same_as_shipping"
-                t-if="
-                    o.company_id.name != 'KUUCH LOGISTICS MEXICO'
-                    and o.move_type in ('out_invoice', 'out_refund')
-                    and (
-                        'l10n_mx_edi_cfdi_uuid' not in o
-                        or not o.l10n_mx_edi_cfdi_uuid
-                    )
-                "
-            >
+            <div class="mt-1" name="mx_fiscal_regime_address_not_same_as_shipping" t-if="mx_pre_cfdi">
                 <strong>Régimen Fiscal:</strong>
-
-                <span
-                    t-if="
-                        o.partner_id
-                        and 'l10n_mx_edi_fiscal_regime' in o.partner_id
-                        and o.partner_id.l10n_mx_edi_fiscal_regime
-                    "
-                    t-field="o.partner_id.l10n_mx_edi_fiscal_regime"
-                />
-
-                <span
-                    t-else=""
-                    class="text-muted"
-                >
-                    No definido
-                </span>
-
+                <span t-if="mx_has_partner_regime" t-field="o.partner_id.l10n_mx_edi_fiscal_regime"/>
+                <span t-else="" class="text-muted">No definido</span>
             </div>
-
         </xpath>
 
-        <xpath
-            expr="//div[@id='partner_vat_address_same_as_shipping']"
-            position="after"
-        >
-
-            <div
-                class="mt-1"
-                name="mx_fiscal_regime_address_same_as_shipping"
-                t-if="
-                    o.company_id.name != 'KUUCH LOGISTICS MEXICO'
-                    and o.move_type in ('out_invoice', 'out_refund')
-                    and (
-                        'l10n_mx_edi_cfdi_uuid' not in o
-                        or not o.l10n_mx_edi_cfdi_uuid
-                    )
-                "
-            >
-
+        <xpath expr="//div[@id='partner_vat_address_same_as_shipping']" position="after">
+            <div class="mt-1" name="mx_fiscal_regime_address_same_as_shipping" t-if="mx_pre_cfdi">
                 <strong>Régimen Fiscal:</strong>
-
-                <span
-                    t-if="
-                        o.partner_id
-                        and 'l10n_mx_edi_fiscal_regime' in o.partner_id
-                        and o.partner_id.l10n_mx_edi_fiscal_regime
-                    "
-                    t-field="o.partner_id.l10n_mx_edi_fiscal_regime"
-                />
-
-                <span
-                    t-else=""
-                    class="text-muted"
-                >
-                    No definido
-                </span>
-
+                <span t-if="mx_has_partner_regime" t-field="o.partner_id.l10n_mx_edi_fiscal_regime"/>
+                <span t-else="" class="text-muted">No definido</span>
             </div>
-
         </xpath>
 
-        <xpath
-            expr="//div[@id='partner_vat_no_shipping']"
-            position="after"
-        >
-
-            <div
-                class="mt-1"
-                name="mx_fiscal_regime_no_shipping"
-                t-if="
-                    o.company_id.name != 'KUUCH LOGISTICS MEXICO'
-                    and o.move_type in ('out_invoice', 'out_refund')
-                    and (
-                        'l10n_mx_edi_cfdi_uuid' not in o
-                        or not o.l10n_mx_edi_cfdi_uuid
-                    )
-                "
-            >
-
+        <xpath expr="//div[@id='partner_vat_no_shipping']" position="after">
+            <div class="mt-1" name="mx_fiscal_regime_no_shipping" t-if="mx_pre_cfdi">
                 <strong>Régimen Fiscal:</strong>
-
-                <span
-                    t-if="
-                        o.partner_id
-                        and 'l10n_mx_edi_fiscal_regime' in o.partner_id
-                        and o.partner_id.l10n_mx_edi_fiscal_regime
-                    "
-                    t-field="o.partner_id.l10n_mx_edi_fiscal_regime"
-                />
-
-                <span
-                    t-else=""
-                    class="text-muted"
-                >
-                    No definido
-                </span>
-
+                <span t-if="mx_has_partner_regime" t-field="o.partner_id.l10n_mx_edi_fiscal_regime"/>
+                <span t-else="" class="text-muted">No definido</span>
             </div>
-
         </xpath>
 
+        <!-- ==============================================================
+             BLOQUE DE INFORMACIÓN: Uso CFDI, Moneda, Forma y Método de pago
+             ============================================================== -->
+        <xpath expr="//div[@id='informations']" position="inside">
 
-       
-        <xpath
-            expr="//div[@id='informations']"
-            position="inside"
-        >
-
-
-            
-
-            <div
-                class="col"
-                name="mx_cfdi_usage_pre_cfdi"
-                t-if="
-                    o.company_id.name != 'KUUCH LOGISTICS MEXICO'
-                    and o.move_type in ('out_invoice', 'out_refund')
-                    and (
-                        'l10n_mx_edi_cfdi_uuid' not in o
-                        or not o.l10n_mx_edi_cfdi_uuid
-                    )
-                "
-            >
-
+            <!-- Uso CFDI (solo sin timbrar) -->
+            <div class="col" name="mx_cfdi_usage_pre_cfdi" t-if="mx_pre_cfdi">
                 <strong>Uso CFDI</strong>
-
                 <div>
-
-                    <t
-                        t-if="
-                            'l10n_mx_edi_usage' in o
-                            and o.l10n_mx_edi_usage
-                        "
-                    >
-
-                        <!-- Clave SAT -->
-                        <span
-                            t-esc="o.l10n_mx_edi_usage"
-                        />
-
-                        <span>
-                            -
-                        </span>
-
-                        <!-- Descripción traducida -->
-                        <span
-                            t-field="o.l10n_mx_edi_usage"
-                        />
-
+                    <t t-if="'l10n_mx_edi_usage' in o and o.l10n_mx_edi_usage">
+                        <span t-esc="o.l10n_mx_edi_usage"/>  <!-- Clave SAT -->
+                        <span>-</span>
+                        <span t-field="o.l10n_mx_edi_usage"/>  <!-- Descripción traducida -->
                     </t>
-
-                    <span
-                        t-else=""
-                        class="text-muted"
-                    >
-                        No definido
-                    </span>
-
+                    <span t-else="" class="text-muted">No definido</span>
                 </div>
-
             </div>
 
-
-         
-            <div
-                class="col"
-                name="mx_payment_way_pre_cfdi"
-                t-if="
-                    o.company_id.name != 'KUUCH LOGISTICS MEXICO'
-                    and o.move_type in ('out_invoice', 'out_refund')
-                    and (
-                        'l10n_mx_edi_cfdi_uuid' not in o
-                        or not o.l10n_mx_edi_cfdi_uuid
-                    )
-                "
-            >
-
-                <strong>Forma de Pago:</strong>
-
-                <div>
-
-                    <t
-                        t-if="
-                            'l10n_mx_edi_payment_method_id' in o
-                            and o.l10n_mx_edi_payment_method_id
-                        "
-                    >
-
-                        <!-- Clave SAT: 01, 02, 03, etc. -->
-                        <span
-                            t-if="
-                                'code' in o.l10n_mx_edi_payment_method_id
-                                and o.l10n_mx_edi_payment_method_id.code
-                            "
-                            t-esc="o.l10n_mx_edi_payment_method_id.code"
-                        />
-
-                        <!-- Separador -->
-                        <span
-                            t-if="
-                                'code' in o.l10n_mx_edi_payment_method_id
-                                and o.l10n_mx_edi_payment_method_id.code
-                            "
-                        >
-                            -
-                        </span>
-
-                        <!-- Descripción traducida -->
-                        <span
-                            t-field="o.l10n_mx_edi_payment_method_id.display_name"
-                        />
-
-                    </t>
-
-                    <span
-                        t-else=""
-                        class="text-muted"
-                    >
-                        No definido
-                    </span>
-
-                </div>
-
+            <!-- Moneda y Tipo de cambio (timbrada y no timbrada) -->
+            <div class="col" name="mx_currency_exchange_rate_pre_cfdi" t-if="mx_show_extra">
+                <strong>Moneda:</strong>
+                <div t-esc="o.currency_id.name"/>
+                <strong>Tipo de cambio:</strong>
+                <div t-if="o.currency_id != o.company_id.currency_id and o.invoice_currency_rate"
+                     t-esc="'%.4f' % (1 / o.invoice_currency_rate)"/>
+                <div t-else="">1.00</div>
             </div>
 
+            <!-- Forma y Método de pago (solo sin timbrar) -->
+            <t t-if="mx_pre_cfdi">
 
-          
-
-            <div
-                class="col"
-                name="mx_payment_method_pre_cfdi"
-                t-if="
-                    o.company_id.name != 'KUUCH LOGISTICS MEXICO'
-                    and o.move_type in ('out_invoice', 'out_refund')
-                    and (
-                        'l10n_mx_edi_cfdi_uuid' not in o
-                        or not o.l10n_mx_edi_cfdi_uuid
-                    )
-                "
-            >
-
-                <strong>Método de Pago:</strong>
-
-                <div>
-
-                    <span
-                        t-if="
-                            'l10n_mx_edi_payment_policy' in o
-                            and o.l10n_mx_edi_payment_policy
-                        "
-                        t-field="o.l10n_mx_edi_payment_policy"
-                    />
-
-                    <span
-                        t-else=""
-                        class="text-muted"
-                    >
-                        No definido
-                    </span>
-
+                <div class="col" name="mx_payment_way_pre_cfdi">
+                    <strong>Forma de Pago:</strong>
+                    <div>
+                        <t t-if="mx_has_payment_method">
+                            <span t-if="mx_has_payment_code" t-esc="o.l10n_mx_edi_payment_method_id.code"/>  <!-- Clave SAT: 01, 02, 03... -->
+                            <span t-if="mx_has_payment_code">-</span>
+                            <span t-field="o.l10n_mx_edi_payment_method_id.display_name"/>  <!-- Descripción traducida -->
+                        </t>
+                        <span t-else="" class="text-muted">99 - Por definir</span>
+                    </div>
                 </div>
 
-            </div>
+                <div class="col" name="mx_payment_method_pre_cfdi">
+                    <strong>Método de Pago:</strong>
+                    <div>
+                        <span t-if="'l10n_mx_edi_payment_policy' in o and o.l10n_mx_edi_payment_policy"
+                              t-field="o.l10n_mx_edi_payment_policy"/>
+                        <span t-else="" class="text-muted">No definido</span>
+                    </div>
+                </div>
 
+            </t>
         </xpath>
 
-
-        
-        <xpath
-            expr="//table[@name='invoice_line_table']/thead/tr/th[@name='th_description']"
-            position="after"
-        >
-
-            <th
-                name="th_mx_product_code_pre_cfdi"
-                class="text-center"
-                t-if="
-                    o.company_id.name != 'KUUCH LOGISTICS MEXICO'
-                    and o.move_type in ('out_invoice', 'out_refund')
-                    and (
-                        'l10n_mx_edi_cfdi_uuid' not in o
-                        or not o.l10n_mx_edi_cfdi_uuid
-                    )
-                "
-            >
-
-                <span>
-                    Clave producto
-                </span>
-
+        <!-- ==============================================================
+             TABLA DE LÍNEAS: columnas Clave producto / Clave unidad (solo sin timbrar)
+             ============================================================== -->
+        <xpath expr="//table[@name='invoice_line_table']/thead/tr/th[@name='th_description']" position="after">
+            <th name="th_mx_product_code_pre_cfdi" class="text-center" t-if="mx_pre_cfdi">
+                <span>Clave producto</span>
             </th>
-
         </xpath>
 
-
-       
-
-        <xpath
-            expr="//table[@name='invoice_line_table']/thead/tr/th[@name='th_priceunit']"
-            position="after"
-        >
-
-            <th
-                name="th_mx_unit_code_pre_cfdi"
-                class="text-center"
-                t-if="
-                    o.company_id.name != 'KUUCH LOGISTICS MEXICO'
-                    and o.move_type in ('out_invoice', 'out_refund')
-                    and (
-                        'l10n_mx_edi_cfdi_uuid' not in o
-                        or not o.l10n_mx_edi_cfdi_uuid
-                    )
-                "
-            >
-
-                <span>
-                    Clave unidad
-                </span>
-
+        <xpath expr="//table[@name='invoice_line_table']/thead/tr/th[@name='th_priceunit']" position="after">
+            <th name="th_mx_unit_code_pre_cfdi" class="text-center" t-if="mx_pre_cfdi">
+                <span>Clave unidad</span>
             </th>
-
         </xpath>
 
-
-        
-        <xpath
-            expr="//table[@name='invoice_line_table']//td[@name='account_invoice_line_name']"
-            position="after"
-        >
-
-            <td
-                name="td_mx_product_code_pre_cfdi"
-                class="text-center"
-                t-if="
-                    o.company_id.name != 'KUUCH LOGISTICS MEXICO'
-                    and o.move_type in ('out_invoice', 'out_refund')
-                    and (
-                        'l10n_mx_edi_cfdi_uuid' not in o
-                        or not o.l10n_mx_edi_cfdi_uuid
-                    )
-                "
-            >
-
-                <span
-                    t-if="
-                        line.product_id
-                        and 'unspsc_code_id' in line.product_id
-                        and line.product_id.unspsc_code_id
-                    "
-                    t-field="line.product_id.unspsc_code_id.code"
-                />
-
-                <span
-                    t-else=""
-                    class="text-muted"
-                >
-                    -
-                </span>
-
+        <xpath expr="//table[@name='invoice_line_table']//td[@name='account_invoice_line_name']" position="after">
+            <td name="td_mx_product_code_pre_cfdi" class="text-center" t-if="mx_pre_cfdi">
+                <span t-if="line.product_id and 'unspsc_code_id' in line.product_id and line.product_id.unspsc_code_id"
+                      t-field="line.product_id.unspsc_code_id.code"/>
+                <span t-else="" class="text-muted">-</span>
             </td>
-
         </xpath>
 
+        <xpath expr="//table[@name='invoice_line_table']//td[@name='td_price_unit']" position="after">
+            <td name="td_mx_unit_code_pre_cfdi" class="text-center" t-if="mx_pre_cfdi">
+                <span t-if="line.product_uom_id and line.product_uom_id.unspsc_code_id"
+                      t-field="line.product_uom_id.unspsc_code_id.code"/>
+                <span t-else="" class="text-muted">-</span>
+            </td>
+        </xpath>
 
-         <xpath
-            expr="//table[@name='invoice_line_table']//td[@name='td_price_unit']"
-            position="after"
-        >
+        <!-- ==============================================================
+             ELEMENTOS ORIGINALES QUE SE OCULTAN EN FACTURAS DE VENTA
+             ============================================================== -->
 
-  <td
-                name="td_mx_unit_code_pre_cfdi"
-                class="text-center"
-                t-if="
-                    o.company_id.name != 'KUUCH LOGISTICS MEXICO'
-                    and o.move_type in ('out_invoice', 'out_refund')
-                    and (
-                        'l10n_mx_edi_cfdi_uuid' not in o
-                        or not o.l10n_mx_edi_cfdi_uuid
-                    )
-                "
-            >
-        <span t-if="line.product_uom_id and line.product_uom_id.unspsc_code_id" t-field="line.product_uom_id.unspsc_code_id.code"/>
+        <!-- Fecha límite -->
+        <xpath expr="//div[@name='due_date']" position="attributes">
+            <attribute name="t-if">not mx_show_extra and o.invoice_date_due and o.move_type == 'out_invoice' and o.state == 'posted'</attribute>
+        </xpath>
 
-       <span
-                    t-else=""
-                    class="text-muted"
-                >
-                    -
-                </span>
+        <!-- Columna Impuestos (encabezado y celda) -->
+        <xpath expr="//table[@name='invoice_line_table']/thead/tr/th[@name='th_taxes']" position="attributes">
+            <attribute name="t-if">not mx_show_extra and display_taxes</attribute>
+        </xpath>
+        <xpath expr="//table[@name='invoice_line_table']//td[@name='td_taxes']" position="attributes">
+            <attribute name="t-if">not mx_show_extra and display_taxes</attribute>
+        </xpath>
 
-    </td>
+        <!-- Payment Communication (se oculta el div contenedor para no dejar margen vacío) -->
+        <xpath expr="//p[@name='payment_communication']/parent::div" position="attributes">
+            <attribute name="t-if">not mx_show_extra and o.move_type in ('out_invoice', 'in_refund') and o.payment_reference</attribute>
+        </xpath>
 
-</xpath>
+        <!-- Conversión de totales a moneda de la compañía (MXN) -->
+        <xpath expr="//t[@t-call='account.document_tax_totals_company_currency_template']" position="attributes">
+            <attribute name="t-if">not mx_show_extra</attribute>
+        </xpath>
 
+    </template>
+
+    <!-- ===================================================================
+         LAYOUT WAVE: Régimen fiscal del emisor, debajo del RFC del encabezado.
+         Se muestra en facturas de venta (timbradas y no timbradas) que no
+         sean de KUUCH ni INNOVACION EN CARGA (condición mx_show_extra).
+         =================================================================== -->
+    <template id="external_layout_wave_mx_company_regime" inherit_id="web.external_layout_wave" priority="99">
+        <xpath expr="//ul[@name='company_address_list']" position="inside">
+            <li t-if="mx_show_extra" name="mx_company_fiscal_regime">
+                Régimen fiscal:
+                <span t-if="'l10n_mx_edi_fiscal_regime' in company and company.l10n_mx_edi_fiscal_regime"
+                      t-field="company.l10n_mx_edi_fiscal_regime"/>
+                <span t-elif="'l10n_mx_edi_fiscal_regime' in company.partner_id and company.partner_id.l10n_mx_edi_fiscal_regime"
+                      t-field="company.partner_id.l10n_mx_edi_fiscal_regime"/>
+            </li>
+        </xpath>
     </template>
 
 </odoo>

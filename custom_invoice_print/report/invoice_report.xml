@@ -2,10 +2,9 @@
     <!-- Heredamos DIRECTO el documento de factura (nivel correcto, no account.report_invoice) -->
     <template id="report_invoice_document_custom" inherit_id="account.report_invoice_document">
         <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
-            <attribute name="t-if">o.company_id.name != 'KUUCH LOGISTICS MEXICO'</attribute>
-        </xpath>
+            <attribute name="t-if">o.company_id.name not in ['KUUCH LOGISTICS MEXICO', 'INNOVACION EN CARGA LOGISTICA DE MEXICO']</attribute>        </xpath>
         <xpath expr="//t[@t-call='web.external_layout']" position="before">
-            <t t-if="o.company_id.name == 'KUUCH LOGISTICS MEXICO'">
+                <t t-if="o.company_id.name in ['KUUCH LOGISTICS MEXICO', 'INNOVACION EN CARGA LOGISTICA DE MEXICO']">
                 <!-- ===== TU FORMATO CUSTOM ===== -->
                 <t t-set="doc" t-value="o"/>
                 <t t-set="context_timestamp" t-value="lambda t: t"/>
