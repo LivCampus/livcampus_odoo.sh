@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="freight_booking_company_rule" model="ir.rule">
+        <field name="name">Freight Booking: multi-company</field>
+        <field name="model_id" ref="bi_freight_management.model_freight_booking"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="freight_operation_company_rule" model="ir.rule">
+        <field name="name">Freight Operation: multi-company</field>
+        <field name="model_id" ref="bi_freight_management.model_freight_operation"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="freight_booking_line_company_rule" model="ir.rule">
+        <field name="name">Freight Booking Line: multi-company</field>
+        <field name="model_id" ref="bi_freight_management.model_freight_booking_line"/>
+        <field name="domain_force">[('booking_id.company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="freight_order_company_rule" model="ir.rule">
+        <field name="name">Freight Order: multi-company</field>
+        <field name="model_id" ref="bi_freight_management.model_freight_order"/>
+        <field name="domain_force">['|', ('freight_operation_id', '=', False), ('freight_operation_id.company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="freight_order_package_company_rule" model="ir.rule">
+        <field name="name">Freight Order Package: multi-company</field>
+        <field name="model_id" ref="bi_freight_management.model_freight_order_package"/>
+        <field name="domain_force">['|', ('freight_operation_id', '=', False), ('freight_operation_id.company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="freight_route_company_rule" model="ir.rule">
+        <field name="name">Freight Route: multi-company</field>
+        <field name="model_id" ref="bi_freight_management.model_freight_route"/>
+        <field name="domain_force">['|', ('freight_operation_id', '=', False), ('freight_operation_id.company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="freight_service_company_rule" model="ir.rule">
+        <field name="name">Freight Service: multi-company</field>
+        <field name="model_id" ref="bi_freight_management.model_freight_service"/>
+        <field name="domain_force">['|', ('freight_operation_id', '=', False), ('freight_operation_id.company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="freight_tracking_company_rule" model="ir.rule">
+        <field name="name">Freight Tracking: multi-company</field>
+        <field name="model_id" ref="bi_freight_management.model_freight_tracking"/>
+        <field name="domain_force">['|', ('freight_operation_id', '=', False), ('freight_operation_id.company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="freight_order_package_item_company_rule" model="ir.rule">
+        <field name="name">Freight Order Package Item: multi-company</field>
+        <field name="model_id" ref="bi_freight_management.model_freight_order_package_item"/>
+        <field name="domain_force">['|', ('freight_order_package_id', '=', False), ('freight_order_package_id.freight_operation_id.company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="freight_route_package_company_rule" model="ir.rule">
+        <field name="name">Freight Route Package: multi-company</field>
+        <field name="model_id" ref="bi_freight_management.model_freight_route_package"/>
+        <field name="domain_force">['|', ('route_id', '=', False), ('route_id.freight_operation_id.company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

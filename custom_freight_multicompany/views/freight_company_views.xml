@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="freight_booking_view_tree_company" model="ir.ui.view">
+        <field name="name">freight_booking_view_tree_company</field>
+        <field name="model">freight.booking</field>
+        <field name="inherit_id" ref="bi_freight_management.freight_booking_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="company_id" groups="base.group_multi_company" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="freight_booking_view_form_company" model="ir.ui.view">
+        <field name="name">freight_booking_view_form_company</field>
+        <field name="model">freight.booking</field>
+        <field name="inherit_id" ref="bi_freight_management.freight_booking_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="(//field[@name='direction'])[1]" position="before">
+                <field name="company_id" groups="base.group_multi_company"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="freight_operation_view_tree_company" model="ir.ui.view">
+        <field name="name">freight_operation_view_tree_company</field>
+        <field name="model">freight.operation</field>
+        <field name="inherit_id" ref="bi_freight_management.freight_operation_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="company_id" groups="base.group_multi_company" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="freight_all_shipment_view_tree_company" model="ir.ui.view">
+        <field name="name">freight_all_shipment_view_tree_company</field>
+        <field name="model">freight.operation</field>
+        <field name="inherit_id" ref="bi_freight_management.freight_all_shipment_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="company_id" groups="base.group_multi_company" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="freight_operation_view_form_company" model="ir.ui.view">
+        <field name="name">freight_operation_view_form_company</field>
+        <field name="model">freight.operation</field>
+        <field name="inherit_id" ref="bi_freight_management.freight_operation_house_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="(//field[@name='direction'])[1]" position="before">
+                <field name="company_id" groups="base.group_multi_company"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="freight_operation_view_search_company" model="ir.ui.view">
+        <field name="name">freight_operation_view_search_company</field>
+        <field name="model">freight.operation</field>
+        <field name="inherit_id" ref="bi_freight_management.freight_operation_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="company_id" groups="base.group_multi_company"/>
+                <filter string="Compañía" name="group_company" context="{'group_by': 'company_id'}"
+                        groups="base.group_multi_company"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
