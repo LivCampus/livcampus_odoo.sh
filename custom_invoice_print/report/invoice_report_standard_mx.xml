@@ -11,6 +11,7 @@
              mx_has_partner_regime: el cliente tiene régimen fiscal definido
              mx_has_payment_method: la factura tiene forma de pago
              mx_has_payment_code:   la forma de pago tiene clave SAT
+             mx_is_ppd:             el método de pago es PPD (forma de pago siempre 99 - Por definir)
              ============================================================== -->
         <xpath expr="//t[@t-set='forced_vat']" position="after">
             <t t-set="mx_is_sale" t-value="o.move_type in ('out_invoice', 'out_refund')"/>
@@ -22,6 +23,8 @@
                t-value="bool('l10n_mx_edi_payment_method_id' in o and o.l10n_mx_edi_payment_method_id)"/>
             <t t-set="mx_has_payment_code"
                t-value="bool(mx_has_payment_method and 'code' in o.l10n_mx_edi_payment_method_id and o.l10n_mx_edi_payment_method_id.code)"/>
+            <t t-set="mx_is_ppd"
+               t-value="'l10n_mx_edi_payment_policy' in o and o.l10n_mx_edi_payment_policy == 'PPD'"/>
         </xpath>
 
         <!-- ==============================================================
@@ -85,12 +88,18 @@
                 <div class="col" name="mx_payment_way_pre_cfdi">
                     <strong>Forma de Pago:</strong>
                     <div>
-                        <t t-if="mx_has_payment_method">
-                            <span t-if="mx_has_payment_code" t-esc="o.l10n_mx_edi_payment_method_id.code"/>  <!-- Clave SAT: 01, 02, 03... -->
-                            <span t-if="mx_has_payment_code">-</span>
-                            <span t-field="o.l10n_mx_edi_payment_method_id.display_name"/>  <!-- Descripción traducida -->
+                        <!-- PPD: la forma de pago siempre es 99 - Por definir -->
+                        <t t-if="mx_is_ppd">
+                            <span>99 - Por definir</span>
                         </t>
-                        <span t-else="" class="text-muted">99 - Por definir</span>
+                        <!-- Otro caso con forma de pago definida -->
+                        <t t-elif="mx_has_payment_method">
+                            <span t-if="mx_has_payment_code" t-esc="o.l10n_mx_edi_payment_method_id.code"/>
+                            <span t-if="mx_has_payment_code">-</span>
+                            <span t-field="o.l10n_mx_edi_payment_method_id.display_name"/>
+                        </t>
+                        <!-- Sin PPD y sin forma de pago -->
+                        <span t-else="" class="text-muted">No definido</span>
                     </div>
                 </div>
 
