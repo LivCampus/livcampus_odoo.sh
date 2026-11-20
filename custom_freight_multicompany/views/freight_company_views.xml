@@ -16,7 +16,7 @@
         <field name="inherit_id" ref="bi_freight_management.freight_booking_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="(//field[@name='direction'])[1]" position="before">
-                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="company_id" groups="base.group_multi_company" readonly="1"/>
             </xpath>
         </field>
     </record>
@@ -46,7 +46,7 @@
         <field name="inherit_id" ref="bi_freight_management.freight_operation_house_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="(//field[@name='direction'])[1]" position="before">
-                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="company_id" groups="base.group_multi_company" readonly="1"/>
             </xpath>
         </field>
     </record>
